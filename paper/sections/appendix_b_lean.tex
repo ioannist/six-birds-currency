@@ -1,0 +1,13 @@
+\section{Lean formalization}\label{app:lean}
+
+The formal component of the paper lives under \path{lean/}. Its role is intentionally narrow. The manuscript's main argument is cross-layer and empirical, but one part of that argument depends on an audit monotonicity discipline: deterministic coarse observation should not increase the relevant finite KL audit. The Lean development formalizes exactly that anchor in Lean~4 with mathlib \cite{demoura2015lean,mathlib2020}. The writing-facing provenance of this formal component is recorded in \path{docs/experiments/final/lean_summary.json}.
+
+The central theorem proved in the project is \texttt{CurrencyMorphism.finiteKL\_map\_le}. In mathematical form, for finite types \(\alpha\) and \(\beta\), a surjective deterministic map \(f:\alpha\to\beta\), probability mass functions \(p\) and \(q\) on \(\alpha\), and strictly positive \(q\), the theorem establishes
+\[
+\mathrm{finiteKL}(\mathrm{PMF.map}\ f\ p,\mathrm{PMF.map}\ f\ q)\le \mathrm{finiteKL}(p,q).
+\]
+Here \(\mathrm{finiteKL}\) is represented in the \(q\,\mathrm{klFun}(p/q)\) form used by the Lean development. This is the formal statement that deterministic pushforward cannot increase the chosen finite-KL audit, matching the standard KL monotonicity background from information theory \cite{kullback1951information,coverthomas2006}.
+
+What is formalized is therefore specific and useful: finite deterministic pushforward monotonicity for a KL-type audit. What is not formalized is equally important to state explicitly. The Lean project does not mechanize the full currency--constraint principle of Sections~\ref{sec:framework} and \ref{sec:morphism}; it does not encode the MaxCal dual-recovery pipeline of Section~\ref{sec:methods}; it does not verify the stochastic experiments of Section~\ref{sec:results}; and it does not prove that every higher-layer shadow price arises from every lower-layer ledger. The formalization supports one foundational audit inequality on which the paper relies, and no more should be claimed for it.
+
+The manuscript therefore uses the Lean result as a formal anchor rather than as a substitute for the empirical argument. This is exactly the right scope for the present paper. The directionality-audit story needs a monotonicity backbone, and \texttt{CurrencyMorphism.finiteKL\_map\_le} supplies one in a precise finite setting. The broader cross-layer economics of closure remains a mathematical and empirical interpretation built on top of that anchor, not something already exhaustively mechanized.

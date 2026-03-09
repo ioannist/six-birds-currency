@@ -1,0 +1,11 @@
+experiment,metric,baseline,new,deviation,tolerance,mode,pass
+dpi,delta_rep,0.009576408970063,0.009576408970063,0.0,0.005,abs,True
+budget,lam_rep,18.50238199938764,18.50238199938764,0.0,0.1,rel,True
+ladder,beta1_coarse_mean,0.0,0.0,0.0,0.0,exact,True
+ladder,beta1_mid_mean,5.0,5.0,0.0,0.0,exact,True
+ladder,beta1_fine_mean,11.0,11.0,0.0,0.0,exact,True
+proxy,mean_nll_baseline,5.287560793904439,5.287560793904439,0.0,0.05,rel,True
+proxy,mean_nll_good,2.2196445818681854,2.2196445818681854,0.0,0.05,rel,True
+proxy,mean_nll_bad,2.76939916766148,2.76939916766148,0.0,0.05,rel,True
+idempotence,defect_rep,0.0283697901993718,0.0283697901993718,0.0,0.1,rel,True
+lean,build_success,True,True,0,0,exact,True

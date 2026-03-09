@@ -1,0 +1,2 @@
+run_id,mean_nll_baseline,mean_nll_good,mean_nll_bad,rel_adv,std_lam_good,std_lam_bad,proxy_pass
+proxy_20260306_125949_nogit,5.287560793904439,2.2196445818681854,2.76939916766148,0.10397130306795872,2.1202318751289444,3.36067109746149,True

@@ -1,0 +1,116 @@
+\section{Six Birds recap and a strict definition of currency}\label{sec:framework}
+
+\subsection{Layers as closure packages}
+
+Six Birds treats a descriptive layer not as a metaphysical stratum but as a closure package: a finite carrier or state space, a lens that determines what can be said at that resolution, a packaging rule that turns recurrent structure into objects, and an audit that certifies what survives coarse observation \cite{tsiokos2026sixbirds}. In the foundations notation one may write a theory package as
+\[
+\mathcal T=(Z,f,\Sigma_f,E,\mathcal A),
+\]
+where \(Z\) is a finite substrate, \(f\) is a lens or coarse description, \(\Sigma_f\) is the induced definability algebra, \(E\) is a packaging endomap, and \(\mathcal A\) is an audit functional. The crucial point for the present paper is that currencies are never absolute. A variable becomes a currency only relative to a layer, its allowed operations, and the audits by which the layer keeps score.
+
+That layer-relativity matters because the same numerical quantity can play very different roles at different resolutions. Energy at a microscopic dynamics layer may be a conserved or budgeted resource, while at a statistical layer the meaningful currency may instead be inverse temperature or free energy. Likewise, a regularization multiplier is not a currency of the task world; it is a currency of the learning layer that decides which updates are affordable.
+
+\subsection{The six primitives with emphasis on P5, P6, and P2}
+
+The Six Birds calculus organizes closure with six primitives \cite{tsiokos2026sixbirds}: \textbf{P1} operator rewrite, \textbf{P2} constraints or gating, \textbf{P3} protocol holonomy or route mismatch, \textbf{P4} staging or sectors, \textbf{P5} packaging, and \textbf{P6} accounting or audit. The present paper uses all six only in outline. Its working core is the chain \textbf{P5}--\textbf{P6}--\textbf{P2}.
+
+Packaging (\textbf{P5}) is what makes an object available as a fixed or nearly fixed point of completion. Audit (\textbf{P6}) is what records whether maintaining that object requires irreversible drive, pathwise asymmetry, cost, or retained resource. Constraint (\textbf{P2}) is what turns those expenditures into a boundary between what can and cannot be stably maintained. The currency question sits precisely at that interface: what must be spent for a packaged description to remain closed, and how does that spending reorganize the next layer?
+
+\subsection{A strict definition of currency}
+
+Fix a layer with state space \(Y\). A currency is a low-dimensional map
+\[
+u:Y\to \R^k,
+\]
+typically with \(k\ll \dim Y\), that plays at least one structural role.
+
+\paragraph{Constraint currency (C1).}
+Feasibility is written in terms of \(u\). There exists a feasible set \(K\subseteq Y\) expressible as
+\[
+K=\{y\in Y: g(u(y))\le 0\},
+\]
+or by a family of inequalities of that kind. This is the primal budget view: currency is what the layer must keep within bounds.
+
+\paragraph{Ledger currency (C2).}
+Costs add along protocols. For a path or protocol \(\gamma=(y_0\to y_1\to\cdots\to y_T)\),
+\[
+\mathrm{Cost}(\gamma)\approx \sum_{t=0}^{T-1}\ell\big(u(y_t),y_t\to y_{t+1}\big),
+\]
+exactly or in expectation. This is the accounting view: currency is what the layer keeps books in.
+
+\paragraph{Potential currency (C3).}
+The ledger induces a monotone potential. There exists a scalar \(U\) such that trajectories satisfy \(U(y_{t+1})\le U(y_t)\) up to controlled noise, or \(\dot U\le 0\) in continuous time. This is the Lyapunov or thermodynamic view.
+
+\paragraph{Dual currency (C4).}
+The layer closes by optimizing under constraints, and the relevant currency appears as a shadow price. If
+\[
+\argmax_{q\in\mathcal Q}\ \Phi(q)\qquad \text{subject to}\qquad \E_q[f_i]=b_i,
+\]
+defines the closure problem, then the Lagrange multipliers
+\[
+\lambda_i=\frac{\partial \Phi^\star}{\partial b_i}
+\]
+are currencies because they price marginal slack in the constraint.
+
+Most real currencies fall into one of two broad families: primal resources, such as energy, time, mass, bandwidth, or compute, and dual prices, such as temperature, chemical potential, market price, or regularization strength. The definition above separates both from mere correlates. A statistic that predicts behavior but plays none of these structural roles may still be useful, but it is not yet a currency in the sense of this paper.
+
+These four roles are not introduced as free terminology. Shadow prices are standard dual objects in constrained optimization, money admits a canonical ledger-memory interpretation, and thermodynamic potentials arise as constrained dual quantities in the Jaynes program \cite{boyd2004convex,kocherlakota1998money,jaynes1957information}.
+
+\subsection{Structural currencies, proxies, and path-vs-state quantities}
+
+The definition is intentionally strict. Many variables discussed as currencies in applied work are only proxies: they correlate with feasibility or performance without structurally entering the layer's constraints, ledgers, or dual programs. Trust scores, prestige metrics, or ad hoc complexity measures often live in this intermediate zone. They may still be useful summaries, but they do not yet deserve the name in the sense used here.
+
+A second distinction is between state currencies and path currencies. A state currency depends on an instantaneous state \(y\), as in \(u(y)\). A path currency is defined on trajectories or protocols. Action functionals, path-reversal asymmetry, and accumulated entropy production are of this latter kind. Six Birds allows both because audits can live on states, edges, or whole paths \cite{tsiokos2026sixbirds}. The common requirement is structural role, not instantaneous representation.
+
+The practical consequence is that not every low-dimensional coordinate is a currency, and not every order parameter is a budget. A quantity becomes a currency only when the theory uses it to decide feasibility, maintenance, or exchange.
+
+\subsection{Why route dependence alone is not enough}
+
+Protocol mismatch or holonomy (\textbf{P3}) is often the first sign that a system carries memory of how it was driven. But route dependence alone does not yet give a directionality currency. A protocol can fail to commute simply because a schedule variable has been hidden, while the enlarged autonomous system remains reversible. In the Six Birds framework, what matters is not bare route dependence but an honest audit that remains monotone under coarse observation \cite{tsiokos2026sixbirds}.
+
+That is why the present paper treats path-reversal KL and cycle affinities as currencies, but treats protocol mismatch by itself only as a diagnostic. A genuine directionality currency must survive the relevant audit rule. Path-reversal relative entropy is used here precisely because irreversible drive is classically identified against reversed-path laws in information-theoretic and nonequilibrium terms \cite{kullback1951information,lebowitz1999gallavotti,seifert2005entropy}. Coarse-graining may hide such a currency, but it must not create one from nothing. This discipline will matter later when we interpret the empirical DPI result.
+
+\section{Currency--constraint duality across closure layers}\label{sec:morphism}
+
+\subsection{The currency--constraint principle}
+
+Consider a lower layer with states \(y_\ell\in Y_\ell\) and a lower-layer currency \(u_\ell(y_\ell)\). Let a packaging map
+\[
+\Pi:Y_\ell\to Y_{\ell+1}
+\]
+define a higher-layer macrostate \(Y=\Pi(y_\ell)\). If that macrostate is to persist as a packaged object rather than a fleeting observation, the substrate must keep lower-layer spending within bounds while maintaining it. In the simplest form, persistence imposes a budget condition such as
+\[
+\E[u_\ell\mid Y]\le b
+\qquad\text{or}\qquad
+\mathrm{Rate}(u_\ell\mid Y)\le b.
+\]
+
+This is the first half of the paper's main principle. What was a currency at the lower layer becomes a constraint at the higher layer because the higher layer cannot spend arbitrarily much of the lower-layer resource and remain closed. Packaging therefore converts a ledger into a feasibility law.
+
+\subsection{Shadow prices as emergent higher-layer currencies}
+
+Once the higher layer is organized by such budget constraints, a new currency appears automatically \cite{boyd2004convex}. If the higher layer optimizes a potential \(\Phi\) subject to the induced budget \(b\), then the dual variable
+\[
+\lambda=\frac{\partial \Phi^\star}{\partial b}
+\]
+measures the marginal value of relaxing that budget. This \(\lambda\) is the higher-layer currency: the exchange rate between what the higher layer wants and what the lower layer can afford.
+
+The point is not merely formal. The dual variable is what the higher layer actually experiences when lower-layer spending binds. When budgets are loose, the corresponding price collapses toward zero. When budgets are tight, price becomes the effective coordinate around which feasible action reorganizes. A currency is therefore what a layer spends to stay closed, and a shadow price is the name the next layer gives to that spending.
+
+\subsection{Canonical examples}
+
+The classical examples all have this form. In equilibrium statistical mechanics, energy is the lower-layer ledger. At the ensemble layer one maximizes entropy under a mean-energy constraint, and inverse temperature appears as the corresponding dual currency; free energy packages the resulting tradeoff into a potential \cite{jaynes1957information,presse2013maxent}. In rate--distortion theory, bits or mutual-information rate are the lower-layer currency. At the representation layer they appear as a compression constraint, and the rate--distortion multiplier becomes the exchange rate between fidelity and code budget \cite{berger1971ratedistortion,coverthomas2006}. In economics, money or budget is the direct feasibility currency, while market prices are the dual variables associated with clearing and resource constraints \cite{arrowdebreu1954}.
+
+The mathematics does not change when the disciplinary names do. The same pattern also explains why compute limits induce approximation pressure, why regularization strengths behave like prices for model complexity, and why bounded attention in cognitive systems can be modeled as a price on representational bandwidth \cite{sims2003rationalinattention}. What changes across fields is the substrate; what remains invariant is the closure geometry of spending, constraint, and dualization.
+
+\subsection{Why this is a closure law rather than a metaphor}
+
+The unifying claim of this paper is therefore not that many disciplines happen to use words like price or cost. It is that stable packaged layers force a recurrent mathematical architecture. If higher-level objects are real only insofar as they can be maintained, then maintenance must be budgeted. Those budgets define what can persist, and their shadow prices define the exchange rates of the next layer. Currency is not added from the outside as an interpretation; it is induced from the requirement that closure survive on a finite substrate.
+
+This is why the present account is more specific than a generic appeal to Lagrange multipliers. Multipliers explain the local geometry of a given constrained program. The currency--constraint principle explains why those constrained programs appear across layers in the first place. Packaging and audit make them unavoidable.
+
+\subsection{Relation to PICA}
+
+PICA turns this argument into an operational interaction pattern. In the PICA enable-matrix language, the most relevant cell is \textbf{P2} $\leftarrow$ \textbf{P6}: accounting informs gating \cite{tsiokos2026create}. That cell is precisely the local signature of the first half of the morphism. A ledger or audit variable becomes a feasibility boundary. Two nearby cells are also suggestive: \textbf{P5} $\leftarrow$ \textbf{P6}, in which audit reshapes packaging, and \textbf{P6} $\leftarrow$ \textbf{P6}, in which accounting regulates itself.
+
+The present paper extracts the general law behind those interactions. PICA supplied the laboratory in which closure primitives can be turned on and off. Here we interpret that laboratory economically. The question is no longer only how closures interact, but what they must spend, how that spending becomes the next layer's constraint, and why the next layer replies with a price.

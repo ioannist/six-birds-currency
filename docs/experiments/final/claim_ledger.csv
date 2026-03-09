@@ -1,0 +1,9 @@
+claim_id,experiment,metric_name,observed_value,threshold,pass,primary_artifact,notes
+C1,dpi_scan,dpi_seed_robust_pass,True,True (no violating seed-run),True,docs/experiments/final/dpi_summary.csv,min_delta_mean=1.068592e-03
+C2,budget_sweep,spearman_rho_mean,-0.9992304731449788,< -0.9,True,docs/experiments/final/budget_summary.csv,price emerges monotonically
+C3,budget_sweep,n_tail_zero_lambda,5,>= 1,True,docs/experiments/final/budget_summary.csv,slack regime yields near-zero lambda
+C4,currency_ladder,beta1 progression,"0.0,5.0,11.0","coarse==0, mid>0, fine>mid",True,docs/experiments/final/ladder_summary.csv,currency dimension grows with resolution
+C5,proxy_ablation,mean_nll_good_vs_bad,"good=2.219645e+00, bad=2.769399e+00",mean_nll_good < mean_nll_bad,True,docs/experiments/final/proxy_summary.csv,good currency predicts better
+C6,proxy_ablation,std_lam_bad_vs_good,"std_bad=3.360671e+00, std_good=2.120232e+00",std_lam_bad > std_lam_good,True,docs/experiments/final/proxy_summary.csv,bad proxy lambda is less stable
+C7,idempotence_budget,defect_end_lt_start,True,True and spearman_rho < -0.7,True,docs/experiments/final/idempotence_summary.csv,stronger budget enforcement lowers defect
+C8,lean,build_success,True,True,True,docs/experiments/final/lean_summary.json,CurrencyMorphism.finiteKL_map_le

@@ -1,0 +1,15 @@
+commands:
+  - id: dpi_scan
+    cmd: python scripts/exp_dpi_scan.py --seeds 0 1 2 3 4
+  - id: budget_sweep
+    cmd: python scripts/exp_budget_sweep.py --seeds 0 1 2 3 4
+  - id: currency_ladder
+    cmd: python scripts/exp_currency_ladder.py --seeds 0 1 2 3 4
+  - id: proxy_ablation
+    cmd: python scripts/exp_proxy_ablation.py
+  - id: idempotence_budget
+    cmd: python scripts/exp_idempotence_vs_budget.py
+  - id: lean_build
+    cmd: cd lean && lake build
+  - id: index_results
+    cmd: python scripts/index_results.py

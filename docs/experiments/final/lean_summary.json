@@ -1,0 +1,6 @@
+{
+  "build_success": true,
+  "theorem_name": "CurrencyMorphism.finiteKL_map_le",
+  "theorem_signature": "theorem finiteKL_map_le [Fintype \u03b1] [Fintype \u03b2] [DecidableEq \u03b1] [DecidableEq \u03b2] (f : \u03b1 \u2192 \u03b2) (hf : Function.Surjective f) (p q : PMF \u03b1) (hq : \u2200 a, 0 < (q a).toReal) : finiteKL (PMF.map f p) (PMF.map f q) \u2264 finiteKL p q",
+  "proof_target": "fallback_finiteKL"
+}

@@ -1,0 +1,183 @@
+{
+  "pack_id": "pack_20260306_125941_nogit",
+  "created_utc": "2026-03-06T12:59:52.470788+00:00",
+  "git_short_hash": "nogit",
+  "config_path": "configs/final/canonical_runs.yaml",
+  "commands": [
+    {
+      "id": "dpi_scan",
+      "command": "python scripts/exp_dpi_scan.py --seeds 0 1 2 3 4",
+      "exit_code": 0,
+      "started_utc": "2026-03-06T12:59:41.826908+00:00",
+      "ended_utc": "2026-03-06T12:59:43.593273+00:00",
+      "parsed": {
+        "run_id": "dpi_20260306_125942_nogit",
+        "csv_path": "results/dpi_scan/dpi_20260306_125942_nogit/metrics.csv",
+        "png_path": "results/dpi_scan/dpi_20260306_125942_nogit/plot.png",
+        "min_delta": "1.068592e-03 (tol=5.000000e-03) n_seeds=5"
+      }
+    },
+    {
+      "id": "budget_sweep",
+      "command": "python scripts/exp_budget_sweep.py --seeds 0 1 2 3 4",
+      "exit_code": 0,
+      "started_utc": "2026-03-06T12:59:43.593484+00:00",
+      "ended_utc": "2026-03-06T12:59:45.752700+00:00",
+      "parsed": {
+        "u_min": "2.241079140655e-06 u_max=1.622877734032e-01 mean=3.617590344819e-02 zero_count=12",
+        "spearman_rho": "-9.992304731450e-01",
+        "run_id": "budget_20260306_125944_nogit_multi",
+        "csv_path": "results/budget_sweep/budget_20260306_125944_nogit_multi/metrics.csv",
+        "png_path": "results/budget_sweep/budget_20260306_125944_nogit_multi/plot.png",
+        "costmin": "7.086281913766e-04 cost0=3.552141414783e-02"
+      }
+    },
+    {
+      "id": "currency_ladder",
+      "command": "python scripts/exp_currency_ladder.py --seeds 0 1 2 3 4",
+      "exit_code": 0,
+      "started_utc": "2026-03-06T12:59:45.752755+00:00",
+      "ended_utc": "2026-03-06T12:59:46.388343+00:00",
+      "parsed": {
+        "run_id": "ladder_20260306_125946_nogit_multi",
+        "json_path": "results/currency_ladder/ladder_20260306_125946_nogit_multi/summary.json",
+        "csv_path": "results/currency_ladder/ladder_20260306_125946_nogit_multi/metrics.csv",
+        "png_path": "results/currency_ladder/ladder_20260306_125946_nogit_multi/plot.png",
+        "level": "fine k=60 beta1=1.100000000000e+01 aff_norm=1.415097169808e+00"
+      }
+    },
+    {
+      "id": "proxy_ablation",
+      "command": "python scripts/exp_proxy_ablation.py",
+      "exit_code": 0,
+      "started_utc": "2026-03-06T12:59:46.388391+00:00",
+      "ended_utc": "2026-03-06T12:59:49.461868+00:00",
+      "parsed": {
+        "u_good_min": "3.453738970550e-06 u_good_max=2.222537384942e-01 mean=3.451891443463e-02 zero_count=156",
+        "lam_true": "5.938913653523e+01",
+        "b_true": "1.208544296506e-02",
+        "run_id": "proxy_20260306_125949_nogit",
+        "csv_path": "results/proxy_ablation/proxy_20260306_125949_nogit/metrics.csv",
+        "png_path": "results/proxy_ablation/proxy_20260306_125949_nogit/plot.png",
+        "mean_nll_baseline": "5.287560793904e+00",
+        "mean_nll_good": "2.219644581868e+00",
+        "mean_nll_bad": "2.769399167661e+00",
+        "rel_adv": "1.039713030680e-01",
+        "lam_good_list": "[56.69733159392216, 58.678454680157806, 58.154027597750115, 62.66511645052423, 57.13431543793327]",
+        "lam_bad_list": "[1.229422868404687, 1.2612956278800924, 9.406691682446237, 0.0, 3.554705570800398]"
+      }
+    },
+    {
+      "id": "idempotence_budget",
+      "command": "python scripts/exp_idempotence_vs_budget.py",
+      "exit_code": 0,
+      "started_utc": "2026-03-06T12:59:49.461956+00:00",
+      "ended_utc": "2026-03-06T12:59:50.460949+00:00",
+      "parsed": {
+        "run_id": "idem_20260306_125950_nogit_s0",
+        "csv_path": "results/idempotence_budget/idem_20260306_125950_nogit_s0/metrics.csv",
+        "png_path": "results/idempotence_budget/idem_20260306_125950_nogit_s0/plot.png",
+        "spearman_rho": "-1.000000000000e+00"
+      }
+    },
+    {
+      "id": "lean_build",
+      "command": "cd lean && lake build",
+      "exit_code": 0,
+      "started_utc": "2026-03-06T12:59:50.460999+00:00",
+      "ended_utc": "2026-03-06T12:59:52.215654+00:00",
+      "parsed": {}
+    },
+    {
+      "id": "index_results",
+      "command": "python scripts/index_results.py",
+      "exit_code": 0,
+      "started_utc": "2026-03-06T12:59:52.215716+00:00",
+      "ended_utc": "2026-03-06T12:59:52.462721+00:00",
+      "parsed": {
+        "index_path": "results/index.csv",
+        "n_rows": "35"
+      }
+    }
+  ],
+  "summaries": {
+    "dpi_scan": {
+      "run_id": "dpi_20260306_125942_nogit",
+      "run_dir": "results/dpi_scan/dpi_20260306_125942_nogit",
+      "metrics_csv": "results/dpi_scan/dpi_20260306_125942_nogit/metrics.csv",
+      "plot_png": "results/dpi_scan/dpi_20260306_125942_nogit/plot.png",
+      "min_delta_mean": 0.0010685921959992,
+      "max_delta_mean": 0.0247500447965482,
+      "n_seeds": 5,
+      "tol": 0.005,
+      "worst_seed_delta": 0.0009196321629791,
+      "dpi_seed_robust_pass": true,
+      "per_seed_metrics_csv": "results/dpi_scan/dpi_20260306_125942_nogit/per_seed_metrics.csv"
+    },
+    "budget_sweep": {
+      "run_id": "budget_20260306_125944_nogit_multi",
+      "run_dir": "results/budget_sweep/budget_20260306_125944_nogit_multi",
+      "metrics_csv": "results/budget_sweep/budget_20260306_125944_nogit_multi/metrics.csv",
+      "plot_png": "results/budget_sweep/budget_20260306_125944_nogit_multi/plot.png",
+      "spearman_rho_mean": -0.9992304731449788,
+      "lam_mean_max": 160.87931235263756,
+      "n_tail_zero_lambda": 5,
+      "budget_pass": true
+    },
+    "currency_ladder": {
+      "run_id": "ladder_20260306_125946_nogit_multi",
+      "run_dir": "results/currency_ladder/ladder_20260306_125946_nogit_multi",
+      "metrics_csv": "results/currency_ladder/ladder_20260306_125946_nogit_multi/metrics.csv",
+      "plot_png": "results/currency_ladder/ladder_20260306_125946_nogit_multi/plot.png",
+      "summary_json": "results/currency_ladder/ladder_20260306_125946_nogit_multi/summary.json",
+      "beta1_coarse_mean": 0.0,
+      "beta1_mid_mean": 5.0,
+      "beta1_fine_mean": 11.0,
+      "ladder_pass": true
+    },
+    "proxy_ablation": {
+      "run_id": "proxy_20260306_125949_nogit",
+      "run_dir": "results/proxy_ablation/proxy_20260306_125949_nogit",
+      "metrics_csv": "results/proxy_ablation/proxy_20260306_125949_nogit/metrics.csv",
+      "plot_png": "results/proxy_ablation/proxy_20260306_125949_nogit/plot.png",
+      "mean_nll_baseline": 5.287560793904439,
+      "mean_nll_good": 2.2196445818681854,
+      "mean_nll_bad": 2.76939916766148,
+      "rel_adv": 0.10397130306795872,
+      "std_lam_good": 2.1202318751289444,
+      "std_lam_bad": 3.36067109746149,
+      "proxy_pass": true
+    },
+    "idempotence_budget": {
+      "run_id": "idem_20260306_125950_nogit_s0",
+      "run_dir": "results/idempotence_budget/idem_20260306_125950_nogit_s0",
+      "metrics_csv": "results/idempotence_budget/idem_20260306_125950_nogit_s0/metrics.csv",
+      "plot_png": "results/idempotence_budget/idem_20260306_125950_nogit_s0/plot.png",
+      "spearman_rho": -0.9999999999999998,
+      "defect_mean_min": 0.001443300174998845,
+      "defect_mean_max": 0.11596447561541763,
+      "defect_end_lt_start": true,
+      "idempotence_pass": true
+    },
+    "lean": {
+      "build_success": true,
+      "theorem_name": "CurrencyMorphism.finiteKL_map_le",
+      "theorem_signature": "theorem finiteKL_map_le [Fintype \u03b1] [Fintype \u03b2] [DecidableEq \u03b1] [DecidableEq \u03b2] (f : \u03b1 \u2192 \u03b2) (hf : Function.Surjective f) (p q : PMF \u03b1) (hq : \u2200 a, 0 < (q a).toReal) : finiteKL (PMF.map f p) (PMF.map f q) \u2264 finiteKL p q",
+      "proof_target": "fallback_finiteKL"
+    },
+    "index_results": {
+      "index_csv": "results/index.csv",
+      "n_rows": 35
+    }
+  },
+  "threshold_checks": {
+    "dpi": true,
+    "budget": true,
+    "ladder": true,
+    "proxy": true,
+    "idempotence": true,
+    "lean": true
+  },
+  "all_commands_exit_zero": true,
+  "all_thresholds_pass": true
+}

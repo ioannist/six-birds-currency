@@ -1,0 +1,39 @@
+\section{Introduction}
+
+\subsection{The recurrence of currencies across sciences}
+
+Energy in physics, code length in information theory, money in economics, compute in algorithms, and attention or precision in cognition are usually introduced inside separate disciplinary languages. Yet they keep doing the same mathematical work. They budget which states or protocols are feasible, they add along sequences of operations, and they reappear as exchange rates between objectives that cannot be simultaneously optimized. The recurrence is too regular to be dismissed as metaphor. Mature theories seem to grow something price-like whenever they stabilize a descriptive layer \cite{jaynes1957information,shannon1948mathematical,arrowdebreu1954,sims2003rationalinattention}.
+
+What is still missing is a layer-relative account of why such quantities recur. It is easy to point to a familiar local example---temperature as the dual of an energy constraint, price as the dual of a budget, regularization strength as the dual of a complexity penalty. It is harder to explain why one layer's ledger becomes the next layer's feasibility law, and why the next layer then speaks back in the language of prices.
+
+\subsection{What standard duality explains, and what it misses}
+
+Standard duality theory explains a great deal once the optimization problem is already on the page \cite{boyd2004convex}. If an agent maximizes utility under a budget, or if an ensemble maximizes entropy under a mean-energy constraint, then shadow prices or multipliers are exactly what one should expect. But that familiar result begins too late for the present question. It presupposes the layer, its state space, and its constraints. It does not explain how a constraint becomes natural at one level because something had to be spent at another.
+
+This paper addresses that missing step. Its central claim is cross-layer: a lower-layer currency becomes a higher-layer constraint because packaged higher-level objects can persist only under bounded lower-layer spending. Once the higher layer is organized by those budgets, its own currency appears as the corresponding shadow price. The point is not merely that multipliers exist. The point is that stable closures inherit prices from the budgets of the substrate that maintains them.
+
+\subsection{Six Birds in one paragraph}
+
+Six Birds Theory provides the closure language in which to state that claim. The framework organizes emergent description around six primitives: \textbf{P1} operator rewrite, \textbf{P2} constraints or gating, \textbf{P3} protocol holonomy or route mismatch, \textbf{P4} staging or sectors, \textbf{P5} packaging, and \textbf{P6} accounting or audit \cite{tsiokos2026sixbirds}. The present paper is primarily about the chain \textbf{P5}--\textbf{P6}--\textbf{P2}: packaging creates higher-level objects, accounting measures what must be spent to keep them coherent, and constraints turn that spending into a feasibility boundary for the next descriptive layer.
+
+That perspective immediately separates genuine currencies from convenient statistics. A quantity earns the name only when it structurally governs closure: when it gates feasibility, adds along protocols, generates a monotone potential, or reappears as a shadow price. Not every salient coordinate or route-dependent effect qualifies. In particular, protocol mismatch by itself is not yet a directionality currency unless it is backed by an honest audit that survives coarse observation.
+
+\subsection{Thesis and contributions}
+
+Our thesis is that currencies are structural, not metaphorical. A currency is what a layer spends to stay closed. A shadow price is the name the next layer gives to the previous layer's budget. The next layer experiences that spending as a feasibility boundary, and organizes its own choices around the marginal value of relaxing it.
+
+The paper makes four contributions.
+\begin{enumerate}[leftmargin=*]
+    \item It gives a strict, layer-relative definition of currency that distinguishes constraint currencies, ledger currencies, potential currencies, and dual currencies.
+    \item It formulates a currency--constraint principle: lower-layer currencies become higher-layer feasibility constraints, and higher-layer currencies emerge as the shadow prices of those constraints.
+    \item It implements that principle in a finite-state stochastic laboratory with frozen, reproducible evidence: honest audits under coarse-graining, monotone price emergence with a slack regime, growth of currency dimension with resolution, failure of proxy currencies, and improved packaging coherence under stronger budget enforcement.
+    \item It provides a formal anchor for the audit side of the story via a Lean theorem proving deterministic-pushforward monotonicity for a finite KL form.
+\end{enumerate}
+
+The empirical aim is modest but important. We do not claim to have formalized every layer transition or every scientific use of a currency. We claim instead that there is a common mathematical pattern strong enough to define, measure, stress-test, and partially formalize.
+
+\subsection{Place in the Six Birds series}
+
+Within the Six Birds series, \emph{Six Birds: Foundations of Emergence Calculus} introduced the primitive vocabulary of closure and the layer package built from lenses, packaging, and audits \cite{tsiokos2026sixbirds}. \emph{To Create a Stone with Six Birds} then turned those primitives into an interaction algebra and a finite stochastic laboratory in which geometric and thermodynamic regimes can be observed side by side \cite{tsiokos2026create}. The present paper adds the economics of closure. It asks what a closure must spend to maintain its packaged objects, and shows that such spending is not merely local bookkeeping: lower-layer audits reappear as higher-layer constraints, while higher-layer currencies emerge as the shadow prices of those same budgets.
+
+The rest of the paper makes that claim precise, operational, and testable. We first define currencies within the Six Birds framework, then state the currency--constraint principle, then realize it in finite Markov systems and evaluate its empirical signatures using a frozen evidence pack.

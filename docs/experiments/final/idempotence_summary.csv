@@ -1,0 +1,2 @@
+run_id,spearman_rho,defect_mean_min,defect_mean_max,defect_end_lt_start,idempotence_pass
+idem_20260306_125950_nogit_s0,-0.9999999999999998,0.001443300174998845,0.11596447561541763,True,True

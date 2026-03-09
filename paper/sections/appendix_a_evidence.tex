@@ -1,0 +1,32 @@
+\section{Evidence map and frozen claims}\label{app:evidence}
+
+This appendix records where each headline claim in the manuscript comes from and what artifact supports it. The paper is written against a frozen evidence pack exported under \code{docs/experiments/final/}. The main writing-facing artifacts are \code{run_manifest.json}, \code{claim_ledger.csv}, the five per-experiment summary CSV files, the five figure files copied into \code{paper/figures/}, \code{lean_summary.json}, and the reproducibility-audit files \code{repro_audit.json} and \code{repro_audit.csv}. All quantitative statements in Section~\ref{sec:results} are taken from those frozen summaries rather than from raw experiment logs.
+
+Table~\ref{tab:claimledger} compresses the writing-facing claim ledger into a referee-readable map. Claims C1--C7 correspond to the five empirical exhibits, while C8 records the existence of the Lean formalization anchor discussed in Section~\ref{sec:methods}. The purpose of the table is documentary rather than inferential: it tells the reader which file one would inspect to verify each headline statement.
+
+\begin{table}[tbp]
+    \centering
+    \small
+    \setlength{\tabcolsep}{6pt}
+    \renewcommand{\arraystretch}{1.1}
+    \caption{Frozen claim map for the main text. All primary artifacts are files under the frozen export directory {\small\texttt{docs/experiments/final/}}.}
+    \label{tab:claimledger}
+    \begin{tabularx}{\linewidth}{L{0.06\linewidth}Y L{0.27\linewidth}}
+        \toprule
+        ID & Claim carried in the manuscript & Primary frozen artifact \\
+        \midrule
+        C1 & Coarse observation does not manufacture path-audit asymmetry. & \code{dpi_summary.csv} \\
+        C2 & Price emerges monotonically as the budget tightens. & \code{budget_summary.csv} \\
+        C3 & The budget sweep enters a zero-price slack regime. & \code{budget_summary.csv} \\
+        C4 & Currency dimension grows with resolution. & \code{ladder_summary.csv} \\
+        C5 & Structural currencies outperform proxy costs on held-out prediction. & \code{proxy_summary.csv} \\
+        C6 & Proxy currencies yield less stable recovered prices. & \code{proxy_summary.csv} \\
+        C7 & Stronger budget enforcement lowers packaging defect. & \code{idempotence_summary.csv} \\
+        C8 & Deterministic-pushforward finite-KL monotonicity is formally proved in Lean. & \code{lean_summary.json} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+The provenance of the manuscript figures is equally direct. Figure~\ref{fig:results_dpi} comes from \code{fig_dpi_scan.png}, Figure~\ref{fig:results_budget} from \code{fig_budget_sweep.png}, Figure~\ref{fig:results_ladder} from \code{fig_currency_ladder.png}, Figure~\ref{fig:results_proxy} from \code{fig_proxy_ablation.png}, and Figure~\ref{fig:results_idempotence} from \code{fig_idempotence_budget.png}. Those files were copied into \code{paper/figures/} for manuscript build stability, but their provenance remains the frozen export in \code{docs/experiments/final/}.
+
+The point of this appendix is simple. The manuscript does not ask the reader to trust an informal narrative assembled after the fact. Each headline claim is tied to a frozen artifact, and the full manifest of those artifacts is itself part of the exported evidence pack.
