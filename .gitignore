@@ -1,0 +1,52 @@
+# Python bytecode/cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Packaging/build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+*.zip
+.package-repo-snapshot-version
+
+# Virtual environments
+.venv/
+venv/
+.env
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+
+# Project artifacts
+results/*
+!results/.gitkeep
+paper/build/
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.pdf
+paper/*.synctex.gz
+paper/*.toc
+paper/*.lof
+paper/*.lot
+paper/*.bcf
+paper/*.run.xml
+paper/*.nav
+paper/*.snm
+paper/*.vrb

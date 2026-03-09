@@ -1,0 +1,151 @@
+\begin{thebibliography}{21}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Arrow and Debreu(1954)]{arrowdebreu1954}
+Kenneth~J. Arrow and Gerard Debreu.
+\newblock Existence of an equilibrium for a competitive economy.
+\newblock \emph{Econometrica}, 22\penalty0 (3):\penalty0 265--290, 1954.
+\newblock \doi{10.2307/1907353}.
+
+\bibitem[Berger(1971)]{berger1971ratedistortion}
+Toby Berger.
+\newblock \emph{Rate Distortion Theory: A Mathematical Basis for Data
+  Compression}.
+\newblock Prentice-Hall, Englewood Cliffs, NJ, 1971.
+
+\bibitem[Boyd and Vandenberghe(2004)]{boyd2004convex}
+Stephen Boyd and Lieven Vandenberghe.
+\newblock \emph{Convex Optimization}.
+\newblock Cambridge University Press, Cambridge, 2004.
+
+\bibitem[Buchholz(1994)]{buchholz1994lumpability}
+Peter Buchholz.
+\newblock Exact and ordinary lumpability in finite {Markov} chains.
+\newblock \emph{Journal of Applied Probability}, 31\penalty0 (1):\penalty0
+  59--75, 1994.
+\newblock \doi{10.2307/3215235}.
+
+\bibitem[Cover and Thomas(2006)]{coverthomas2006}
+Thomas~M. Cover and Joy~A. Thomas.
+\newblock \emph{Elements of Information Theory}.
+\newblock Wiley-Interscience, Hoboken, NJ, 2 edition, 2006.
+
+\bibitem[de~Moura et~al.(2015)de~Moura, Kong, Avigad, van Doorn, and von
+  Raumer]{demoura2015lean}
+Leonardo de~Moura, Soonho Kong, Jeremy Avigad, Floris van Doorn, and Jakob von
+  Raumer.
+\newblock The {Lean} theorem prover ({System} description).
+\newblock In \emph{Automated Deduction -- CADE-25}, volume 9195 of
+  \emph{Lecture Notes in Computer Science}, pages 378--388. Springer, 2015.
+\newblock \doi{10.1007/978-3-319-21401-6_26}.
+
+\bibitem[Esposito and den Broeck(2010)]{esposito2010threefaces}
+Massimiliano Esposito and Christian~Van den Broeck.
+\newblock Three faces of the second law. {I}. master equation formulation.
+\newblock \emph{Physical Review E}, 82\penalty0 (1):\penalty0 011143, 2010.
+\newblock \doi{10.1103/PhysRevE.82.011143}.
+
+\bibitem[Jaynes(1957)]{jaynes1957information}
+E.~T. Jaynes.
+\newblock Information theory and statistical mechanics.
+\newblock \emph{Physical Review}, 106\penalty0 (4):\penalty0 620--630, 1957.
+\newblock \doi{10.1103/PhysRev.106.620}.
+
+\bibitem[Kemeny and Snell(1960)]{kemeny1960finite}
+John~G. Kemeny and J.~Laurie Snell.
+\newblock \emph{Finite {Markov} Chains}.
+\newblock D. Van Nostrand Company, Princeton, NJ, 1960.
+
+\bibitem[Kocherlakota(1998)]{kocherlakota1998money}
+Narayana~R. Kocherlakota.
+\newblock Money is memory.
+\newblock \emph{Journal of Economic Theory}, 81\penalty0 (2):\penalty0
+  232--251, 1998.
+\newblock \doi{10.1006/jeth.1997.2357}.
+
+\bibitem[Kullback and Leibler(1951)]{kullback1951information}
+Solomon Kullback and Richard~A. Leibler.
+\newblock On information and sufficiency.
+\newblock \emph{The Annals of Mathematical Statistics}, 22\penalty0
+  (1):\penalty0 79--86, 1951.
+\newblock \doi{10.1214/aoms/1177729694}.
+
+\bibitem[Lebowitz and Spohn(1999)]{lebowitz1999gallavotti}
+Joel~L. Lebowitz and Herbert Spohn.
+\newblock A {Gallavotti--Cohen}-type symmetry in the large deviation functional
+  for stochastic dynamics.
+\newblock \emph{Journal of Statistical Physics}, 95\penalty0 (1-2):\penalty0
+  333--365, 1999.
+\newblock \doi{10.1023/A:1004589714161}.
+
+\bibitem[McFadden(1974)]{mcfadden1974conditional}
+Daniel McFadden.
+\newblock Conditional logit analysis of qualitative choice behavior.
+\newblock In Paul Zarembka, editor, \emph{Frontiers in Econometrics}, pages
+  105--142. Academic Press, New York, 1974.
+
+\bibitem[Press{\'e} et~al.(2013)Press{\'e}, Ghosh, Lee, and
+  Dill]{presse2013maxent}
+Steve Press{\'e}, Kingshuk Ghosh, Julian Lee, and Ken~A. Dill.
+\newblock Principles of maximum entropy and maximum caliber in statistical
+  physics.
+\newblock \emph{Reviews of Modern Physics}, 85\penalty0 (3):\penalty0
+  1115--1141, 2013.
+\newblock \doi{10.1103/RevModPhys.85.1115}.
+
+\bibitem[Schnakenberg(1976)]{schnakenberg1976network}
+J{\"u}rgen Schnakenberg.
+\newblock Network theory of microscopic and macroscopic behavior of master
+  equation systems.
+\newblock \emph{Reviews of Modern Physics}, 48\penalty0 (4):\penalty0 571--585,
+  1976.
+\newblock \doi{10.1103/RevModPhys.48.571}.
+
+\bibitem[Seifert(2005)]{seifert2005entropy}
+Udo Seifert.
+\newblock Entropy production along a stochastic trajectory and an integral
+  fluctuation theorem.
+\newblock \emph{Physical Review Letters}, 95\penalty0 (4):\penalty0 040602,
+  2005.
+\newblock \doi{10.1103/PhysRevLett.95.040602}.
+
+\bibitem[Shannon(1948)]{shannon1948mathematical}
+Claude~E. Shannon.
+\newblock A mathematical theory of communication.
+\newblock \emph{Bell System Technical Journal}, 27:\penalty0 379--423,
+  623--656, 1948.
+\newblock \doi{10.1002/j.1538-7305.1948.tb01338.x}.
+
+\bibitem[Sims(2003)]{sims2003rationalinattention}
+Christopher~A. Sims.
+\newblock Implications of rational inattention.
+\newblock \emph{Journal of Monetary Economics}, 50\penalty0 (3):\penalty0
+  665--690, 2003.
+\newblock \doi{10.1016/S0304-3932(03)00029-1}.
+
+\bibitem[{The mathlib Community}(2020)]{mathlib2020}
+{The mathlib Community}.
+\newblock The {Lean} mathematical library.
+\newblock In \emph{Proceedings of the 9th {ACM SIGPLAN} International
+  Conference on Certified Programs and Proofs}, pages 367--381. ACM, 2020.
+\newblock \doi{10.1145/3372885.3373824}.
+
+\bibitem[Tsiokos(2026{\natexlab{a}})]{tsiokos2026create}
+Ioannis Tsiokos.
+\newblock To create a stone with six birds: Emergent geometric and
+  thermodynamic regimes from a minimal stochastic substrate,
+  2026{\natexlab{a}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.18838994}.
+\newblock Zenodo preprint.
+
+\bibitem[Tsiokos(2026{\natexlab{b}})]{tsiokos2026sixbirds}
+Ioannis Tsiokos.
+\newblock Six birds: Foundations of emergence calculus, 2026{\natexlab{b}}.
+\newblock URL \url{https://doi.org/10.5281/zenodo.18365949}.
+\newblock Zenodo preprint.
+
+\end{thebibliography}

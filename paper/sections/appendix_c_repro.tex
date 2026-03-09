@@ -1,0 +1,30 @@
+\section{Reproducibility audit}\label{app:repro}
+
+The manuscript is tied to a frozen export in \code{docs/experiments/final/}. The key writing-facing files are the manifest (\code{run_manifest.json}), the claim ledger (\code{claim_ledger.csv}), the five experiment summary CSVs, the copied figure assets, the Lean summary (\code{lean_summary.json}), and the audit pair (\code{repro_audit.json} and \code{repro_audit.csv}). These files are derived from a canonical evidence pack assembled after the experimental phase and then exported into a snapshot-stable location for writing. The full implementation repository for the code, experiments, and analysis used to produce this evidence pack is \url{https://github.com/ioannist/six-birds-currency}.
+
+The clean-room reproducibility audit reruns the canonical build chain from a fresh install path: editable package installation, test suite, lint checks, Lean build, the canonical evidence-pack script, and comparison of rebuilt summaries against the frozen manifest within preset tolerances. The writing-facing audit outcome is stored in \code{docs/experiments/final/repro_audit.json} and \code{docs/experiments/final/repro_audit.csv}. In the frozen export, every tracked experiment passes its tolerance check, and the Lean build passes as well.
+
+\begin{table}[tbp]
+    \centering
+    \small
+    \setlength{\tabcolsep}{6pt}
+    \renewcommand{\arraystretch}{1.1}
+    \caption{Frozen writing-facing artifacts used by the manuscript. All listed basenames refer to files under {\small\texttt{docs/experiments/final/}}.}
+    \label{tab:frozenassets}
+    \begin{tabularx}{\linewidth}{L{0.32\linewidth}Y}
+        \toprule
+        Artifact & Role in the manuscript \\
+        \midrule
+        \code{run_manifest.json} & Canonical manifest of the frozen evidence pack used as the writing baseline. \\
+        \code{claim_ledger.csv} & Claim-level ledger linking each headline statement to a primary artifact. \\
+        \code{dpi_summary.csv}, \code{budget_summary.csv}, \code{ladder_summary.csv}, \code{proxy_summary.csv}, \code{idempotence_summary.csv} & Quantitative summaries from which all reported numbers in Section~\ref{sec:results} are drawn. \\
+        \code{fig_*.png} & Frozen figure assets imported into \code{paper/figures/} for stable manuscript builds. \\
+        \code{lean_summary.json} & Writing-facing record of the formalization target and build status. \\
+        \code{repro_audit.json}, \code{repro_audit.csv} & Clean-room rebuild comparison against the frozen manifest. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+This separation between evidence generation and manuscript writing is deliberate. The paper is written against exported summaries rather than live experimental state. That makes the manuscript easier to review, the claims easier to audit, and the later archival snapshot easier to trust. A referee need not reconstruct the entire development environment to understand where a number or figure came from; the frozen writing-facing artifacts already provide that map.
+
+The broader methodological point is that reproducibility here is not an afterthought appended to a finished narrative. It is part of the paper's argumentative structure. The currency--constraint claim is intentionally ambitious in scope, so the paper offsets that ambition with a narrow and explicit evidentiary discipline: frozen claims, named artifacts, and a clean-room rebuild check against tolerance-bound summaries.

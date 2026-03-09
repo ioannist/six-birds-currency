@@ -1,0 +1,78 @@
+\section{Finite-state realization and measurement pipeline}\label{sec:methods}
+
+\subsection{Finite Markov substrate and coarse-graining lenses}
+
+To operationalize Sections~\ref{sec:framework} and \ref{sec:morphism}, we work in a finite-state stochastic laboratory of the kind developed in the Six Birds program \cite{tsiokos2026sixbirds,tsiokos2026create}. A micro-layer is a finite Markov chain with row-stochastic kernel \(P\) on state set \(Z=\{1,\dots,n\}\) \cite{kemeny1960finite}. A trajectory \(x_{0:T}=(x_0,\dots,x_T)\) is sampled from an initial distribution \(\rho_0\) and the kernel \(P\). Coarse description is implemented by a lens or partition \(f:Z\to X\), equivalently by block labels on microstates. The corresponding macro path is obtained pointwise as \(f(x_{0:T})=(f(x_0),\dots,f(x_T))\). This distinction matters: when the claim concerns audit monotonicity under observation, we always push forward the trajectories themselves rather than replacing them by a coarse Markov approximation.
+
+When a Markov representative at the coarse level is needed, as in the resolution-ladder experiment, we use stationary-conditional lumping \cite{kemeny1960finite,buchholz1994lumpability}. If \(\pi\) is a stationary distribution of \(P\), then the macro kernel \(Q\) induced by a partition \(f\) is
+\[
+Q_{ab}=\sum_{i:f(i)=a}\pi(i\mid a)\sum_{j:f(j)=b} P_{ij},
+\]
+where \(\pi(i\mid a)\) is \(\pi\) conditioned on block \(a\). This is a measurement convenience, not an ontological claim: the DPI experiment is deliberately performed on pushed-forward trajectories, while the ladder and cycle-rank measurements use the lumped kernel as a compact representative of coarse support structure.
+
+We use several controlled kernel families. Reversible kernels furnish null cases in which detailed balance holds and pathwise asymmetry should vanish. Driven ring and module-of-rings kernels furnish non-equilibrium cases with calibrated cycle affinities, allowing us to separate honest drive from artifacts of schedule or resolution. All reported results are drawn from frozen runs of this finite laboratory; no new experiments are introduced after the evidence freeze.
+
+\subsection{Audits: path-reversal KL and cycle affinities}
+
+Two audit families play the role of lower-layer currencies. The first is path-reversal asymmetry. For a horizon \(T\), let \(\mathbb{P}_{\rho_0,T}\) be the law of a length-\(T\) path and let \(\mathcal R\) reverse path order. The directionality audit is
+\[
+\SigmaT = \KL\!\big(\mathbb{P}_{\rho_0,T}\,\|\,\mathcal R_*\mathbb{P}_{\rho_0,T}\big).
+\]
+This is the standard relative-entropy form of forward-versus-reversed-path asymmetry in information-theoretic and stochastic-thermodynamic treatments \cite{kullback1951information,lebowitz1999gallavotti,seifert2005entropy}.
+For known kernels we can compute this analytically from the boundary term and expected log-ratio increments; for data we estimate it from sliding windows of length \(T+1\). The estimator counts each observed window \(s\), compares it to its reversal \(\mathrm{rev}(s)\), and accumulates \(\hat p(s)\log\!\big(\hat p(s)/\hat p(\mathrm{rev}(s))\big)\). Windows whose reverse is unobserved are not silently ignored; their mass is tracked as an explicit reverse-support diagnostic. This is the audit used in the coarse-graining honesty experiment.
+
+The second audit family is cycle drive. On each bidirected edge of the support graph we compute the antisymmetric 1-form
+\[
+a_{ij}=\log\frac{P_{ij}}{P_{ji}},
+\]
+with \(a_{ij}=0\) when either direction is absent from the bidirected support. A cycle basis of the undirected support graph then yields affinity coordinates
+\[
+A(\gamma)=\sum_{(i\to j)\in \gamma} a_{ij}.
+\]
+This network-affinity construction follows the standard cycle-decomposition view of nonequilibrium steady states \cite{schnakenberg1976network,esposito2010threefaces}.
+These coordinates are low-dimensional drive currencies: they vanish for reversible dynamics, survive only on loops, and their ambient dimension is controlled by the cycle rank \(\betaone = m-n+c\) of the support graph. The resolution-ladder experiment uses \(\betaone\) and the norm of the affinity vector to quantify how many independent currency directions become visible as resolution increases.
+
+\subsection{Dual recovery: MaxCal and conditional-logit fitting}
+
+To recover higher-layer prices from lower-layer budgets we use the simplest constrained-maximum-entropy closure compatible with the story in Section~\ref{sec:morphism} \cite{jaynes1957information,presse2013maxent}. Given a nonnegative cost matrix \(u_{ij}\), the one-constraint MaxCal family is
+\[
+q_{ij}(\lambda)=\frac{e^{-\lambda u_{ij}}}{\sum_k e^{-\lambda u_{ik}}}.
+\]
+Here \(\lambda\ge 0\) is the dual price of the expected-cost budget. For a given budget \(b\), we solve for \(\lambda\) so that the expected cost under \(q(\lambda)\) matches \(b\). If the budget is slack---that is, if \(b\) is at or above the unconstrained cost at \(\lambda=0\)---the solver returns \(\lambda=0\) exactly. This is the mechanism behind the budget-sweep figure: shadow price appears only when the budget binds.
+
+The cost matrix itself is derived from lower-layer currencies. In the budget-sweep experiment we estimate macro costs by aggregating the positive part of micro entropy-production-like increments,
+\[
+c(i\to j)=\max\left\{0,\log\frac{P_{ij}}{P_{ji}}\right\},
+\]
+conditioned on observed macro transitions. In the object-stability experiment we instead use a maintenance cost that penalizes transitions leaving the current package. Both are instances of the same methodological rule: the dual price is not fitted against an arbitrary penalty but against a cost extracted from the lower-layer audit or maintenance ledger.
+
+For data-driven recovery we fit \(\lambda\) directly from transition counts. Given counts \(C_{ij}\) and a candidate cost matrix \(u_{ij}\), the conditional-logit likelihood is
+\[
+\ell(\lambda)=\sum_{i,j} C_{ij}\log q_{ij}(\lambda).
+\]
+This is the standard one-parameter conditional-logit form for discrete choice over outgoing transitions \cite{mcfadden1974conditional}.
+We maximize this likelihood by one-dimensional root finding on the score, and estimate uncertainty from the observed curvature. This is the inference engine used both to validate synthetic recovery and to compare structurally motivated currencies against proxy costs in the held-out prediction experiment. In the proxy-ablation study the same train/test counts are evaluated under three models: a row-wise empirical baseline, a one-parameter model built from the structurally aligned cost, and a scale-matched proxy cost obtained by row-wise permutation of the good cost.
+
+\subsection{Packaging endomaps and idempotence defect}
+
+To measure how budgets buy object stability, we use a packaging endomap of the Six Birds form \cite{tsiokos2026sixbirds}. For a distribution \(\mu\) on microstates, a partition \(f\), and a time horizon \(\tau\), define
+\[
+E_{\tau,f}(\mu)=U_f\big(Q_f(\mu P^\tau)\big),
+\]
+where \(Q_f\) pushes a micro distribution forward to blocks and \(U_f\) lifts it back using either uniform prototypes within each block or stationary prototypes conditioned inside each block. The idempotence defect is
+\[
+\delta_{\tau,f}(\mu)=\left\|E_{\tau,f}\!\big(E_{\tau,f}(\mu)\big)-E_{\tau,f}(\mu)\right\|_1.
+\]
+If a packaged object is perfectly compatible with the closure rule, packaging twice changes nothing and the defect vanishes. Positive defect measures how much additional correction the packaging map must perform after one round of evolution and re-projection.
+
+In the idempotence-versus-budget experiment we use ring-collapsed packages as macro objects. A budget-controlled micro kernel is constructed by reweighting the base kernel according to the macro maintenance cost:
+\[
+W^{(\lambda)}_{ij}=P^{\mathrm{base}}_{ij}\exp\!\big(-\lambda\,u_{f(i),f(j)}\big),
+\]
+followed by row normalization. Larger \(\lambda\) suppresses budget-expensive exits from the current package. We then compute defects on prototype representatives of each macro object and summarize them by blockwise mean, standard deviation, and maximum. This gives an operational link between currency and objecthood: stronger budget enforcement should purchase more nearly idempotent packaging.
+
+\subsection{Frozen evidence pack and formal anchor}
+
+All quantitative claims in the paper are drawn from a frozen evidence pack. The pack contains per-experiment summary tables, figures, a claim ledger linking each headline statement to its primary artifact, a manifest recording the canonical runs, and a clean-room reproducibility audit that rebuilds the evidence from scratch within prespecified tolerances. The implementation of the experimental pipeline and analysis code is maintained in the public repository \url{https://github.com/ioannist/six-birds-currency}. The results section therefore reports only frozen quantities: no parameter retuning, rerunning, or post hoc exploratory analysis is introduced during manuscript preparation.
+
+The formal component is narrower than the full paper claim and is meant as an anchor, not a replacement, for the empirical argument. Against the standard information-theoretic background for KL monotonicity under deterministic observation \cite{coverthomas2006}, we prove in Lean~4 with mathlib \cite{demoura2015lean,mathlib2020} the theorem \texttt{CurrencyMorphism.finiteKL\_map\_le}, which establishes deterministic-pushforward monotonicity for a finite KL quantity written in the \(q\,\mathrm{klFun}(p/q)\) form. This theorem formalizes the idea that coarse deterministic observation cannot increase the relevant finite KL audit. It directly supports the monotonicity discipline behind our use of path-reversal asymmetry as an honest currency of directionality. It does not mechanize the entire currency--constraint principle, nor does it prove the empirical claims of the Markov laboratory; rather, it secures one foundational audit inequality on which the broader narrative relies.

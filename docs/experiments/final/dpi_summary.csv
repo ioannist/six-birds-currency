@@ -1,0 +1,2 @@
+run_id,min_delta_mean,max_delta_mean,n_seeds,tol,worst_seed_delta,dpi_seed_robust_pass
+dpi_20260306_125942_nogit,0.0010685921959992,0.0247500447965482,5,0.005,0.0009196321629791,True

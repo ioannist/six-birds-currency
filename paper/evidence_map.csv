@@ -1,0 +1,11 @@
+claim_id,section_target,status,primary_artifact,notes
+C1,§5.1 Honest audits under coarse-graining,mapped,docs/experiments/final/dpi_summary.csv,min_delta_mean=1.068592e-03
+C2,§5.2 Price emergence and slack,mapped,docs/experiments/final/budget_summary.csv,price emerges monotonically
+C3,§5.2 Price emergence and slack,mapped,docs/experiments/final/budget_summary.csv,slack regime yields near-zero lambda
+C4,§5.3 Currency dimension grows with resolution,mapped,docs/experiments/final/ladder_summary.csv,currency dimension grows with resolution
+C5,§5.4 Proxy currencies fail,mapped,docs/experiments/final/proxy_summary.csv,good currency predicts better
+C6,§5.4 Proxy currencies fail,mapped,docs/experiments/final/proxy_summary.csv,bad proxy lambda is less stable
+C7,§5.5 Budgets buy object stability,mapped,docs/experiments/final/idempotence_summary.csv,stronger budget enforcement lowers defect
+C8,Appendix B / Lean formalization,mapped,docs/experiments/final/lean_summary.json,CurrencyMorphism.finiteKL_map_le
+T1,§2 Framework,mapped,paper/references.bib,"Conceptual support via tsiokos2026sixbirds: layer package, six primitives, state/path audits, and the P5--P6--P2 emphasis."
+T2,§3 Currency--constraint duality,mapped,paper/references.bib,"Conceptual support via tsiokos2026sixbirds and tsiokos2026create: lower-layer currency to higher-layer constraint, shadow-price emergence, and PICA relation."

@@ -1,0 +1,142 @@
+{
+  "baseline_manifest": "docs/experiments/final/run_manifest.json",
+  "new_manifest": "results/final_evidence/pack_20260306_130004_nogit/manifest.json",
+  "tolerances": {
+    "dpi": {
+      "delta_rep_abs": 0.005
+    },
+    "budget": {
+      "lam_rep_rel": 0.1
+    },
+    "ladder": {
+      "beta_exact": true
+    },
+    "proxy": {
+      "mean_nll_rel": 0.05
+    },
+    "idempotence": {
+      "defect_rep_rel": 0.1
+    },
+    "lean": {
+      "build_success_exact": true
+    }
+  },
+  "environment_mode": "fallback_system_python",
+  "venv_create_exit_code": 1,
+  "venv_create_stdout": "The virtual environment was not created successfully because ensurepip is not\navailable.  On Debian/Ubuntu systems, you need to install the python3-venv\npackage using the following command.\n\n    apt install python3.10-venv\n\nYou may need to use sudo with that command.  After installing the python3-venv\npackage, recreate your virtual environment.\n\nFailing command: /tmp/currency_repro_klbj7mp_/venv/bin/python\n\n",
+  "command_exit_codes": {
+    "clean_install": 0,
+    "pytest_q": 0,
+    "make_lint": 0,
+    "lean_build": 0,
+    "final_evidence_pack": 0,
+    "index_results": 0
+  },
+  "missing_docs_artifacts": [],
+  "comparisons": [
+    {
+      "experiment": "dpi",
+      "metric": "delta_rep",
+      "baseline": 0.009576408970063,
+      "new": 0.009576408970063,
+      "deviation": 0.0,
+      "tolerance": 0.005,
+      "pass": true,
+      "mode": "abs"
+    },
+    {
+      "experiment": "budget",
+      "metric": "lam_rep",
+      "baseline": 18.50238199938764,
+      "new": 18.50238199938764,
+      "deviation": 0.0,
+      "tolerance": 0.1,
+      "pass": true,
+      "mode": "rel"
+    },
+    {
+      "experiment": "ladder",
+      "metric": "beta1_coarse_mean",
+      "baseline": 0.0,
+      "new": 0.0,
+      "deviation": 0.0,
+      "tolerance": 0.0,
+      "pass": true,
+      "mode": "exact"
+    },
+    {
+      "experiment": "ladder",
+      "metric": "beta1_mid_mean",
+      "baseline": 5.0,
+      "new": 5.0,
+      "deviation": 0.0,
+      "tolerance": 0.0,
+      "pass": true,
+      "mode": "exact"
+    },
+    {
+      "experiment": "ladder",
+      "metric": "beta1_fine_mean",
+      "baseline": 11.0,
+      "new": 11.0,
+      "deviation": 0.0,
+      "tolerance": 0.0,
+      "pass": true,
+      "mode": "exact"
+    },
+    {
+      "experiment": "proxy",
+      "metric": "mean_nll_baseline",
+      "baseline": 5.287560793904439,
+      "new": 5.287560793904439,
+      "deviation": 0.0,
+      "tolerance": 0.05,
+      "pass": true,
+      "mode": "rel"
+    },
+    {
+      "experiment": "proxy",
+      "metric": "mean_nll_good",
+      "baseline": 2.2196445818681854,
+      "new": 2.2196445818681854,
+      "deviation": 0.0,
+      "tolerance": 0.05,
+      "pass": true,
+      "mode": "rel"
+    },
+    {
+      "experiment": "proxy",
+      "metric": "mean_nll_bad",
+      "baseline": 2.76939916766148,
+      "new": 2.76939916766148,
+      "deviation": 0.0,
+      "tolerance": 0.05,
+      "pass": true,
+      "mode": "rel"
+    },
+    {
+      "experiment": "idempotence",
+      "metric": "defect_rep",
+      "baseline": 0.0283697901993718,
+      "new": 0.0283697901993718,
+      "deviation": 0.0,
+      "tolerance": 0.1,
+      "pass": true,
+      "mode": "rel"
+    },
+    {
+      "experiment": "lean",
+      "metric": "build_success",
+      "baseline": true,
+      "new": true,
+      "deviation": 0,
+      "tolerance": 0,
+      "pass": true,
+      "mode": "exact"
+    }
+  ],
+  "all_commands_ok": true,
+  "all_metrics_within_tolerance": true,
+  "no_missing_docs_artifacts": true,
+  "pass": true
+}
