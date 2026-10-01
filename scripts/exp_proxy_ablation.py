@@ -30,6 +30,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--k", type=int, default=16)
     parser.add_argument("--partition", choices=["random", "block"], default="random")
     parser.add_argument("--seed-cost", type=int, default=0)
+    parser.add_argument("--proxy-seed", type=int, default=0)
     parser.add_argument("--N-cost", type=int, default=8000)
     parser.add_argument("--traj-len", type=int, default=80)
 
@@ -173,7 +174,12 @@ def heldout_nll_per_transition(C_test: np.ndarray, Q: np.ndarray) -> float:
     total = float(C_test.sum())
     if total <= 0.0:
         raise ValueError("C_test must have positive total mass.")
-    return float(-np.sum(C_test * np.log(Q)) / total)
+    if C_test.shape != Q.shape or np.any(Q < 0.0) or not np.isfinite(Q).all():
+        raise ValueError("Invalid held-out kernel.")
+    observed = C_test > 0.0
+    if np.any(Q[observed] == 0.0):
+        return float(np.inf)
+    return float(-np.sum(C_test[observed] * np.log(Q[observed])) / total)
 
 
 def evaluate_seed_list(
@@ -183,12 +189,14 @@ def evaluate_seed_list(
     eval_eps: float,
     n_train_per_row: int,
     n_test_per_row: int,
+    proxy_seed: int = 0,
 ) -> tuple[pd.DataFrame, list[float], list[float]]:
     """Evaluate baseline/good/bad models across a list of seeds."""
     rows = []
     lam_good_vals: list[float] = []
     lam_bad_vals: list[float] = []
 
+    u_bad = make_u_bad(u_good, proxy_seed)
     for seed in seed_list:
         rng = np.random.default_rng(seed)
 
@@ -202,7 +210,6 @@ def evaluate_seed_list(
         Q_good = maxent_kernel(u_good, lam_good)
         nll_good = heldout_nll_per_transition(C_test, Q_good)
 
-        u_bad = make_u_bad(u_good, seed)
         lam_bad, se_bad = fit_lambda(C_train, u_bad)
         Q_bad = maxent_kernel(u_bad, lam_bad)
         nll_bad = heldout_nll_per_transition(C_test, Q_bad)
@@ -285,62 +292,29 @@ def main() -> None:
     if len(seed_list) == 0:
         raise ValueError("seed-list must contain at least one seed.")
 
-    max_retries = 32
-    last_metrics: dict[str, float] | None = None
-    selected_df: pd.DataFrame | None = None
-    selected_lam_good: list[float] | None = None
-    selected_lam_bad: list[float] | None = None
-    selected_stats: dict[str, float] | None = None
-    selected_lam_true = 0.0
-    selected_b_true = 0.0
+    if not 0.0 < args.true_budget_frac < 1.0:
+        raise ValueError("true-budget-frac must lie strictly between 0 and 1.")
+    if not 0.0 < args.eval_eps < 1.0:
+        raise ValueError("eval-eps must lie strictly between 0 and 1.")
+
+    # Fixed design and fixed proxy across sampling seeds. Report every outcome;
+    # do not choose a new design after inspecting held-out results.
     selected_seed_cost = int(args.seed_cost)
-
-    for attempt in range(max_retries):
-        eff_seed_cost = args.seed_cost + attempt
-        u_good, _, stats = build_u_good(args, seed_cost=eff_seed_cost)
-
-        q0 = maxent_kernel(u_good, lam=0.0)
-        cost0 = expected_cost(q0, u_good)
-        costmin = float(np.mean(np.min(u_good, axis=1)))
-        b_true = costmin + args.true_budget_frac * (cost0 - costmin)
-        lam_true, q_true, _ = solve_lambda_for_budget(
-            u_good,
-            b_true,
-            bracket=(0.0, 50.0),
-            tol=1e-10,
-        )
-
-        df, lam_good_vals, lam_bad_vals = evaluate_seed_list(
-            seed_list=seed_list,
-            q_true=q_true,
-            u_good=u_good,
-            eval_eps=args.eval_eps,
-            n_train_per_row=args.n_train_per_row,
-            n_test_per_row=args.n_test_per_row,
-        )
-        metrics = summarize(df, lam_good_vals, lam_bad_vals)
-
-        last_metrics = metrics
-        if passes_self_check(metrics):
-            selected_df = df
-            selected_lam_good = lam_good_vals
-            selected_lam_bad = lam_bad_vals
-            selected_stats = stats
-            selected_lam_true = float(lam_true)
-            selected_b_true = float(b_true)
-            selected_seed_cost = int(eff_seed_cost)
-            break
-
-    if selected_df is None or selected_lam_good is None or selected_lam_bad is None:
-        assert last_metrics is not None
-        raise RuntimeError(
-            "Self-check failed after retries: "
-            f"mean_good={last_metrics['mean_nll_good']:.6e}, "
-            f"mean_bad={last_metrics['mean_nll_bad']:.6e}, "
-            f"rel_adv={last_metrics['rel_adv']:.6e}, "
-            f"std_good={last_metrics['std_lam_good']:.6e}, "
-            f"std_bad={last_metrics['std_lam_bad']:.6e}"
-        )
+    u_good, _, selected_stats = build_u_good(args, seed_cost=selected_seed_cost)
+    q0 = maxent_kernel(u_good, lam=0.0)
+    cost0 = expected_cost(q0, u_good)
+    costmin = float(np.mean(np.min(u_good, axis=1)))
+    selected_b_true = costmin + args.true_budget_frac * (cost0 - costmin)
+    selected_lam_true, q_true, _ = solve_lambda_for_budget(u_good, selected_b_true)
+    selected_df, selected_lam_good, selected_lam_bad = evaluate_seed_list(
+        seed_list=seed_list,
+        q_true=q_true,
+        u_good=u_good,
+        eval_eps=args.eval_eps,
+        n_train_per_row=args.n_train_per_row,
+        n_test_per_row=args.n_test_per_row,
+        proxy_seed=args.proxy_seed,
+    )
 
     metrics = summarize(selected_df, selected_lam_good, selected_lam_bad)
 
@@ -369,6 +343,9 @@ def main() -> None:
         run_id=run_id,
         params=params,
         metrics={
+            "self_check_pass": passes_self_check(metrics),
+            "design_selection": "prespecified_no_retries",
+            "proxy_policy": "fixed_across_sampling_seeds",
             "mean_nll_baseline": metrics["mean_nll_baseline"],
             "mean_nll_good": metrics["mean_nll_good"],
             "mean_nll_bad": metrics["mean_nll_bad"],
@@ -383,6 +360,7 @@ def main() -> None:
         },
     )
 
+    print(f"self_check_pass={passes_self_check(metrics)}")
     print(f"run_id={run_id}")
     print(f"csv_path={csv_path.as_posix()}")
     print(f"png_path={png_path.as_posix()}")

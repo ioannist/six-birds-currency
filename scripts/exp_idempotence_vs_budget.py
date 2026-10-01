@@ -193,11 +193,19 @@ def main() -> None:
         lam_values.append(float(lam))
         defect_values.append(float(defect_mean))
 
+        pi_controlled = stationary_dist(P_lam, method="eigs")
+        edge_cost = u_macro[part[:, None], part[None, :]]
+        controlled_cost = expected_cost(P_lam, edge_cost, mu=pi_controlled)
+        max_exit = float(np.max(np.sum(P_lam * edge_cost, axis=1)))
         rows.append(
             {
                 "b": float(b),
                 "lam": float(lam),
                 "achieved": float(achieved),
+                "calibration_cost": float(achieved),
+                "controlled_stationary_cost": controlled_cost,
+                "controlled_max_exit": max_exit,
+                "stationary_defect_bound": min(2.0, 2.0 * args.tau * max_exit),
                 "defect_mean": float(defect_mean),
                 "defect_std": float(defect_std),
                 "defect_max": float(defect_max),
@@ -241,6 +249,7 @@ def main() -> None:
     plot_curve(df, run_id, png_path)
 
     summary = {
+        "budget_role": "auxiliary_macro_calibration",
         "spearman_rho": float(rho),
         "defect_mean_min": float(df["defect_mean"].min()),
         "defect_mean_max": float(df["defect_mean"].max()),

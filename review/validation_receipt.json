@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-01",
+  "starting_checkpoint": "b4a5140",
+  "review_mode": "direct mathematical review and adversarial self-review",
+  "independent_external_review": false,
+  "tests": {
+    "command": "PYTHONPATH=src python3 -m pytest -q",
+    "passed": 63,
+    "failed": 0
+  },
+  "lint": {
+    "command": "ruff check .",
+    "passed": true
+  },
+  "lean": {
+    "command": "cd lean && lake build",
+    "passed": true,
+    "toolchain": "leanprover/lean4:v4.28.0",
+    "mathlib_revision": "8f9d9cff6bd728b17a24e163c9402775d9e6a365",
+    "axiom_command": "cd lean && lake env lean CheckAxioms.lean",
+    "only_axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "placeholders": false
+  },
+  "numerical_evidence": "review/numerical_receipt.json",
+  "unsupported_subclaim": "Across-seed stability of proxy versus aligned fitted prices",
+  "paper_unchanged_since_checkpoint": true,
+  "frozen_paper_evidence_unchanged": true,
+  "config_sha256": {
+    "lean/lean-toolchain": "db7bb24b756d745bbde83fe92718b51bd3625dae3701ba0f598d0eedcd3f3028",
+    "lean/lakefile.lean": "18b9ed463f6154bf6254bb840d3dc06ab821600f2ed5cc72badd802115aa545c",
+    "lean/lake-manifest.json": "5a6c6ee8da6566abf1c1f0f6e73a705a412fed731ef4c3d795eed7d6930a9aae",
+    "pyproject.toml": "1a0b5bc84639bec81e3aa54842f219e52f811bbf78257abce4d9284504795971"
+  }
+}

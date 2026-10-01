@@ -6,14 +6,18 @@ import networkx as nx
 import numpy as np
 
 
-def edge_log_ratio(P: np.ndarray, eps: float = 1e-15) -> np.ndarray:
+def edge_log_ratio(P: np.ndarray, eps: float = 0.0) -> np.ndarray:
     """Compute antisymmetric edge log-ratios log(P_ij / P_ji) on bidirectional edges."""
     K = np.asarray(P, dtype=np.float64)
     if K.ndim != 2 or K.shape[0] != K.shape[1]:
         msg = f"P must be square, got shape {K.shape}."
         raise ValueError(msg)
 
+    if not np.isfinite(K).all() or np.any(K < 0.0):
+        raise ValueError("P must be finite and nonnegative.")
     n = K.shape[0]
+    if not np.isfinite(eps) or eps < 0.0:
+        raise ValueError("eps must be finite and nonnegative.")
     a = np.zeros_like(K)
     mask = (K > eps) & (K.T > eps)
     mask[np.diag_indices(n)] = False
@@ -28,7 +32,11 @@ def undirected_support_graph(P: np.ndarray, thresh: float = 0.0) -> nx.Graph:
         msg = f"P must be square, got shape {K.shape}."
         raise ValueError(msg)
 
+    if not np.isfinite(K).all() or np.any(K < 0.0):
+        raise ValueError("P must be finite and nonnegative.")
     n = K.shape[0]
+    if not np.isfinite(thresh) or thresh < 0.0:
+        raise ValueError("thresh must be finite and nonnegative.")
     G = nx.Graph()
     G.add_nodes_from(range(n))
     for i in range(n):
@@ -58,11 +66,14 @@ def cycle_affinities(
 ) -> np.ndarray:
     """Compute cycle affinities from edge log-ratios along each cycle."""
     a = edge_log_ratio(P)
+    K = np.asarray(P, dtype=np.float64)
+    if orientation not in ("canonical", "given"):
+        raise ValueError(f"Unknown orientation: {orientation!r}.")
     out = np.zeros(len(cycles), dtype=np.float64)
 
     for idx, cyc in enumerate(cycles):
-        if len(cyc) < 2:
-            msg = "Each cycle must contain at least two distinct nodes."
+        if len(cyc) < 3 or len(set(cyc)) != len(cyc):
+            msg = "Each simple undirected cycle needs at least three distinct nodes."
             raise ValueError(msg)
 
         seq = list(cyc)
@@ -76,6 +87,10 @@ def cycle_affinities(
         for t in range(len(seq)):
             u = seq[t]
             v = seq[(t + 1) % len(seq)]
+            if not (0 <= u < K.shape[0] and 0 <= v < K.shape[0]):
+                raise ValueError("Cycle vertex outside the kernel carrier.")
+            if K[u, v] <= 0.0 or K[v, u] <= 0.0:
+                raise ValueError("Cycle uses an edge outside bidirectional support.")
             total += float(a[u, v])
         out[idx] = total
 

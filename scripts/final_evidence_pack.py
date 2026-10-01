@@ -179,6 +179,8 @@ def summarize_dpi(root: Path, result: CommandResult) -> dict[str, Any]:
         "run_dir": relpath(run_dir, root),
         "metrics_csv": relpath(csv_path, root),
         "plot_png": relpath(png_path, root) if png_path else "",
+        "audit": str(meta.get("summary_metrics", {}).get("audit", "legacy_truncated")),
+        "reverse_mix": float(meta.get("summary_metrics", {}).get("reverse_mix", 0.0)),
         "min_delta_mean": float(metrics["delta_mean"].min()),
         "max_delta_mean": float(metrics["delta_mean"].max()),
         "n_seeds": int(meta.get("summary_metrics", {}).get("n_seeds", 0)),
@@ -271,6 +273,10 @@ def summarize_proxy(root: Path, result: CommandResult) -> dict[str, Any]:
         "rel_adv": rel_adv,
         "std_lam_good": std_good,
         "std_lam_bad": std_bad,
+        "design_selection": sm.get("design_selection", "legacy_result_selected"),
+        "proxy_policy": sm.get("proxy_policy", "legacy_changes_across_seeds"),
+        "prediction_pass": bool(good < bad and rel_adv >= 0.02),
+        "price_stability_pass": bool(std_bad > std_good),
         "proxy_pass": bool(good < bad and rel_adv >= 0.02 and std_bad > std_good),
     }
 
@@ -297,6 +303,7 @@ def summarize_idempotence(root: Path, result: CommandResult) -> dict[str, Any]:
         "spearman_rho": rho,
         "defect_mean_min": float(sm.get("defect_mean_min", float("nan"))),
         "defect_mean_max": float(sm.get("defect_mean_max", float("nan"))),
+        "budget_role": sm.get("budget_role", "legacy_auxiliary_calibration"),
         "defect_end_lt_start": defect_decrease,
         "idempotence_pass": bool(rho < -0.7 and defect_decrease),
     }
@@ -308,7 +315,13 @@ def summarize_lean(root: Path, result: CommandResult) -> dict[str, Any]:
         "build_success": bool(result.exit_code == 0),
         "theorem_name": "CurrencyMorphism.finiteKL_map_le",
         "theorem_signature": sig,
-        "proof_target": "fallback_finiteKL",
+        "proof_target": "finiteKL_with_support_and_conditional_Gibbs_duality",
+        "additional_theorems": [
+            "CurrencyMorphism.finiteKL_map_le_of_support",
+            "CurrencyMorphism.finiteKL_path_observe_le",
+            "CurrencyMorphism.maxent_budget_optimal",
+            "CurrencyMorphism.gibbs_budget_shadow_bound",
+        ],
     }
 
 

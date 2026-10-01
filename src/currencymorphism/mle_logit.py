@@ -6,6 +6,8 @@ import numpy as np
 from scipy.optimize import brentq
 from scipy.special import logsumexp
 
+from currencymorphism.maxcal_single import maxent_kernel
+
 
 def fit_lambda(
     C: np.ndarray,
@@ -15,11 +17,22 @@ def fit_lambda(
     lam_max: float = 50.0,
     tol: float = 1e-10,
 ) -> tuple[float, float]:
-    """Fit lambda by conditional-logit MLE and return (lambda_hat, se_hat)."""
+    """Return the conditional-logit MLE and inverse-information scale.
+
+    At a boundary this scale is not a symmetric confidence-interval guarantee.
+    A likelihood supremum attained only at infinity returns (inf, inf).
+    Constant costs on all observed rows give an unidentifiable price.
+    lam_max is an initial bracketing endpoint, not a parameter-space bound.
+    """
     counts = np.asarray(C, dtype=np.float64)
     cost = np.asarray(u, dtype=np.float64)
 
-    if counts.ndim != 2 or cost.ndim != 2 or counts.shape != cost.shape:
+    if (
+        counts.ndim != 2
+        or cost.ndim != 2
+        or counts.shape != cost.shape
+        or 0 in counts.shape
+    ):
         msg = (
             "C and u must be 2D and shape-matched, "
             f"got {counts.shape} and {cost.shape}."
@@ -31,7 +44,7 @@ def fit_lambda(
     if np.any(counts < 0.0):
         msg = "C must be nonnegative."
         raise ValueError(msg)
-    if np.any(cost < -1e-15):
+    if np.any(cost < 0.0):
         msg = "u must be nonnegative up to numerical tolerance."
         raise ValueError(msg)
     if counts.sum() <= 0.0:
@@ -40,15 +53,25 @@ def fit_lambda(
 
     cost = np.clip(cost, 0.0, None)
 
-    if lam_min < 0.0:
+    if not np.isfinite([lam_min, lam_max]).all() or lam_min < 0.0:
         msg = f"lam_min must be nonnegative, got {lam_min}."
         raise ValueError(msg)
     if lam_max <= lam_min:
         msg = f"lam_max must be greater than lam_min, got {lam_max} <= {lam_min}."
         raise ValueError(msg)
-    if tol <= 0.0:
+    if not np.isfinite(tol) or tol <= 0.0:
         msg = f"tol must be positive, got {tol}."
         raise ValueError(msg)
+
+    # Row offsets cancel in conditional likelihood and its derivatives.
+    cost = cost - cost.min(axis=1, keepdims=True)
+    informative = counts.sum(axis=1) > 0.0
+    if np.all(np.ptp(cost[informative], axis=1) == 0.0):
+        return float(lam_min), float(np.inf)
+    if np.sum(counts * cost) == 0.0:
+        # All observed destinations minimize their row cost: the likelihood
+        # increases to its supremum at infinity, so no finite MLE exists.
+        return float(np.inf), float(np.inf)
 
     score_lo = _score(lam_min, counts, cost)
     if score_lo <= 0.0:
@@ -61,10 +84,9 @@ def fit_lambda(
     hi = max(lam_max, lam_min + 1.0)
     score_hi = _score(hi, counts, cost)
     while score_hi > 0.0:
+        if hi > np.finfo(float).max / 2.0:
+            raise RuntimeError("MLE exceeds floating-point range.")
         hi *= 2.0
-        if hi > 1e6:
-            msg = "Failed to bracket root before lambda exceeded 1e6."
-            raise RuntimeError(msg)
         score_hi = _score(hi, counts, cost)
 
     lam_hat = float(
@@ -80,7 +102,9 @@ def fit_lambda(
 
 def _logq(lam: float, u: np.ndarray) -> np.ndarray:
     """Compute row-wise log-probabilities under q_ij(lam) ∝ exp(-lam*u_ij)."""
-    x = -lam * u
+    centered = u - u.min(axis=1, keepdims=True)
+    with np.errstate(over="ignore"):
+        x = -lam * centered
     return x - logsumexp(x, axis=1, keepdims=True)
 
 
@@ -102,20 +126,17 @@ def _score(lam: float, C: np.ndarray, u: np.ndarray) -> float:
 
 
 def _info(lam: float, C: np.ndarray, u: np.ndarray) -> float:
-    """Compute observed Fisher information I = -ell''(lam)."""
+    """Observed Fisher information, computed without subtractive cancellation."""
     row_counts = C.sum(axis=1)
-    eu, eu2 = _row_moments(lam, u)
-    var = np.maximum(eu2 - eu * eu, 0.0)
+    q = maxent_kernel(u, lam)
+    eu = np.sum(q * u, axis=1, keepdims=True)
+    var = np.sum(q * (u - eu) ** 2, axis=1)
     return float(np.sum(row_counts * var))
 
 
 def _is_non_identifiable(lam: float, C: np.ndarray, u: np.ndarray) -> bool:
-    """Return True when all informative rows have near-zero conditional variance."""
-    row_counts = C.sum(axis=1)
-    informative = row_counts > 0.0
-    if not np.any(informative):
-        return True
-
-    eu, eu2 = _row_moments(lam, u)
-    var = np.maximum(eu2 - eu * eu, 0.0)
-    return bool(np.all(var[informative] <= 1e-15))
+    """Structural identifiability depends on costs in rows with observations."""
+    informative = C.sum(axis=1) > 0.0
+    return not np.any(informative) or bool(
+        np.all(np.ptp(u[informative], axis=1) == 0.0)
+    )

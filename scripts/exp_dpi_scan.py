@@ -20,14 +20,15 @@ def parse_args() -> argparse.Namespace:
         description="DPI scan via pushforward trajectories"
     )
 
+    parser.add_argument("--outdir", type=str, default="results/dpi_scan")
     parser.add_argument("--kernel", choices=["module", "ring"], default="module")
     parser.add_argument("--T", type=int, default=5)
     parser.add_argument("--traj-len", type=int, default=80)
     parser.add_argument("--N", type=int, default=2000)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--seeds", type=int, nargs="*", default=None)
-    parser.add_argument("--tol", type=float, default=5e-3)
-    parser.add_argument("--max-N", type=int, default=64000)
+    parser.add_argument("--tol", type=float, default=1e-10)
+    parser.add_argument("--reverse-mix", type=float, default=0.01)
     parser.add_argument("--k-list", type=str, default=None)
 
     parser.add_argument("--n", type=int, default=40)
@@ -105,22 +106,25 @@ def evaluate_once(
     seed: int,
     k_values: list[int],
     kernel_name: str,
+    reverse_mix: float = 0.01,
 ) -> tuple[pd.DataFrame, SigmaEstimate]:
     """Run one simulation pass and return per-k DPI rows."""
     rng = np.random.default_rng(seed)
     paths_micro = simulate_many(P, x0_dist=rho0, T=traj_len - 1, N=N, rng=rng)
 
-    sig_micro = sigma_T_empirical(paths_micro, T)
+    sig_micro = sigma_T_empirical(paths_micro, T, reverse_mix=reverse_mix)
 
     rows = []
     n_states = P.shape[0]
     for k in k_values:
         part = block_partition(n_states, k)
         paths_coarse = coarse_path(paths_micro, part)
-        sig_coarse = sigma_T_empirical(paths_coarse, T)
+        sig_coarse = sigma_T_empirical(paths_coarse, T, reverse_mix=reverse_mix)
 
         rows.append(
             {
+                "reverse_mix": float(reverse_mix),
+                "audit": "reversal_mixture_KL",
                 "seed": int(seed),
                 "k": int(k),
                 "sigma_micro": float(sig_micro.value),
@@ -148,43 +152,32 @@ def run_one_seed(
     k_values: list[int],
     seed: int,
 ) -> tuple[pd.DataFrame, dict[str, float | int | bool]]:
-    """Run one seed with adaptive N while keeping the seed fixed."""
+    """Run one prespecified sample with reversal-mixture regularization."""
+    # One prespecified sample. The common reversal mixture obeys exact DPI;
+    # a negative finite margin is a bug, not a reason to resample until it passes.
     current_N = int(args.N)
-    while True:
-        df, _ = evaluate_once(
-            P=P,
-            rho0=rho0,
-            T=args.T,
-            traj_len=args.traj_len,
-            N=current_N,
-            seed=seed,
-            k_values=k_values,
-            kernel_name=args.kernel,
-        )
-        violations = df[df["delta"] < -args.tol]
-        if violations.empty:
-            info = {
-                "seed": int(seed),
-                "final_N": int(current_N),
-                "failed": False,
-                "worst_k": -1,
-                "worst_delta": float(df["delta"].min()),
-            }
-            break
-
-        next_N = current_N * 2
-        if next_N > args.max_N:
-            worst = violations.sort_values("delta").iloc[0]
-            info = {
-                "seed": int(seed),
-                "final_N": int(current_N),
-                "failed": True,
-                "worst_k": int(worst["k"]),
-                "worst_delta": float(worst["delta"]),
-            }
-            break
-
-        current_N = next_N
+    df, _ = evaluate_once(
+        P=P,
+        rho0=rho0,
+        T=args.T,
+        traj_len=args.traj_len,
+        N=current_N,
+        seed=seed,
+        k_values=k_values,
+        kernel_name=args.kernel,
+        reverse_mix=args.reverse_mix,
+    )
+    if not np.isfinite(df["delta"]).all():
+        raise ValueError("DPI margin is not finite; use a positive reverse mixture.")
+    violations = df[df["delta"] < -args.tol]
+    worst = df.sort_values("delta").iloc[0]
+    info = {
+        "seed": int(seed),
+        "final_N": current_N,
+        "failed": not violations.empty,
+        "worst_k": int(worst["k"]),
+        "worst_delta": float(worst["delta"]),
+    }
 
     df = df.copy()
     df["final_N"] = int(info["final_N"])
@@ -217,6 +210,8 @@ def aggregate_per_seed(per_seed_df: pd.DataFrame, n_seeds: int) -> pd.DataFrame:
             "n_seeds": int(n_seeds),
         }
     )
+    agg["audit"] = "reversal_mixture_KL"
+    agg["reverse_mix"] = float(per_seed_df["reverse_mix"].iloc[0])
     return agg.reset_index(drop=True)
 
 
@@ -273,8 +268,10 @@ def main() -> None:
         raise ValueError(msg)
     if args.N <= 0:
         raise ValueError(f"N must be positive, got {args.N}.")
-    if args.max_N < args.N:
-        raise ValueError(f"max-N must be >= N ({args.N}), got {args.max_N}.")
+    if not np.isfinite(args.tol) or args.tol < 0.0:
+        raise ValueError("tol must be finite and nonnegative.")
+    if not 0.0 < args.reverse_mix < 0.5:
+        raise ValueError("The DPI scan requires 0 < reverse-mix < 0.5.")
 
     P, rho0 = build_kernel(args)
     n_states = P.shape[0]
@@ -284,7 +281,7 @@ def main() -> None:
     multi_seed = args.seeds is not None and len(args.seeds) > 0
 
     run_id = f"dpi_{new_run_id()}"
-    run_dir = Path("results") / "dpi_scan" / run_id
+    run_dir = Path(args.outdir) / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
 
     if multi_seed:
@@ -320,6 +317,8 @@ def main() -> None:
         worst_seed_min_delta = seed_min_deltas[worst_seed]
         idx = int(agg_df["delta_mean"].idxmin())
         summary = {
+            "audit": "reversal_mixture_KL",
+            "reverse_mix": float(args.reverse_mix),
             "n_seeds": int(len(seed_list)),
             "min_delta_mean": float(agg_df.loc[idx, "delta_mean"]),
             "min_delta_std": float(agg_df.loc[idx, "delta_std"]),
@@ -367,6 +366,8 @@ def main() -> None:
         plot_single(df, png_path)
 
         summary = {
+            "audit": "reversal_mixture_KL",
+            "reverse_mix": float(args.reverse_mix),
             "min_delta": float(df["delta"].min()),
             "max_delta": float(df["delta"].max()),
             "final_N": int(info["final_N"]),

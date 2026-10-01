@@ -7,6 +7,7 @@ from typing import Any
 
 import networkx as nx
 import numpy as np
+from scipy.special import expit
 
 from currencymorphism.markov import normalize_rows
 
@@ -35,7 +36,7 @@ def reversible_kernel(
         else:
             weight = _get_symmetric_weight(w, u, v)
 
-        if weight <= 0.0:
+        if not np.isfinite(weight) or weight <= 0.0:
             msg = f"Edge weight must be positive for edge ({u}, {v}); got {weight}."
             raise ValueError(msg)
 
@@ -61,10 +62,13 @@ def ring_drift_kernel(n: int, affinity_A: float, stay_prob: float = 0.0) -> np.n
         msg = f"stay_prob must satisfy 0 <= stay_prob < 1, got {stay_prob}."
         raise ValueError(msg)
 
+    if not np.isfinite(affinity_A):
+        raise ValueError("affinity_A must be finite.")
     a = float(affinity_A) / float(n)
-    base = (1.0 - stay_prob) / (2.0 * np.cosh(a / 2.0))
-    cw = base * np.exp(a / 2.0)
-    ccw = base * np.exp(-a / 2.0)
+    cw = (1.0 - stay_prob) * expit(a)
+    ccw = (1.0 - stay_prob) * expit(-a)
+    if cw == 0.0 or ccw == 0.0:
+        raise ValueError("Requested affinity loses bidirectional support in float64.")
 
     P = np.zeros((n, n), dtype=np.float64)
     idx = np.arange(n)
@@ -87,7 +91,7 @@ def module_rings_chain(
     if L < 3:
         msg = f"L must be at least 3, got {L}."
         raise ValueError(msg)
-    if bridge_weight < 0.0:
+    if not np.isfinite(bridge_weight) or bridge_weight < 0.0:
         msg = f"bridge_weight must be nonnegative, got {bridge_weight}."
         raise ValueError(msg)
 
@@ -96,6 +100,9 @@ def module_rings_chain(
         msg = f"affinities must have length {M}, got shape {A.shape}."
         raise ValueError(msg)
 
+    if not np.isfinite(A).all():
+        raise ValueError("Affinities must be finite.")
+
     n_states = M * L
     W = np.zeros((n_states, n_states), dtype=np.float64)
 
@@ -103,6 +110,8 @@ def module_rings_chain(
         a = A[m] / (2.0 * L)
         cw = float(np.exp(+a))
         ccw = float(np.exp(-a))
+        if not np.isfinite([cw, ccw]).all() or min(cw, ccw) <= 0.0:
+            raise ValueError("Affinities exceed the bidirectional float64 range.")
         base = m * L
         for i in range(L):
             s = base + i

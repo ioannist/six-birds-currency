@@ -1,0 +1,10 @@
+import CurrencyMorphism
+
+#print axioms CurrencyMorphism.finiteKL_map_le
+#print axioms CurrencyMorphism.finiteKL_map_le_of_support
+#print axioms CurrencyMorphism.finiteKL_eq_sum_log_of_support
+#print axioms CurrencyMorphism.finiteKL_path_observe_le
+#print axioms CurrencyMorphism.gibbs_KL_identity
+#print axioms CurrencyMorphism.gibbs_penalized_optimal
+#print axioms CurrencyMorphism.gibbs_budget_shadow_bound
+#print axioms CurrencyMorphism.maxent_budget_optimal

@@ -1,0 +1,8 @@
+'CurrencyMorphism.finiteKL_map_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CurrencyMorphism.finiteKL_map_le_of_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CurrencyMorphism.finiteKL_eq_sum_log_of_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CurrencyMorphism.finiteKL_path_observe_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CurrencyMorphism.gibbs_KL_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CurrencyMorphism.gibbs_penalized_optimal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CurrencyMorphism.gibbs_budget_shadow_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CurrencyMorphism.maxent_budget_optimal' depends on axioms: [propext, Classical.choice, Quot.sound]

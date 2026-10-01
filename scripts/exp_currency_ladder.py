@@ -125,6 +125,8 @@ def run_one_seed(
     seed: int,
 ) -> list[dict[str, float | int | str]]:
     """Compute per-level ladder metrics for one seed."""
+    # This construction is deterministic. Repeated seed labels are repetitions,
+    # not independent robustness trials.
     _ = seed
     if args.affinities is None:
         affinities = np.linspace(1.0, -0.5, args.M, dtype=np.float64)
@@ -268,6 +270,7 @@ def main() -> None:
         plot_aggregated(agg_df, png_path)
 
         payload = {
+            "deterministic": True,
             "run_id": run_id,
             "params": vars(args),
             "levels": agg_df.to_dict(orient="records"),
@@ -276,6 +279,7 @@ def main() -> None:
 
         metric_map = {r["name"]: r for r in agg_df.to_dict(orient="records")}
         summary = {
+            "deterministic": True,
             "n_seeds": int(len(seed_list)),
             "beta1_coarse_mean": float(metric_map["coarse"]["beta1_mean"]),
             "beta1_mid_mean": float(metric_map["mid"]["beta1_mean"]),
@@ -313,6 +317,7 @@ def main() -> None:
         plot_single(metrics, png_path)
 
         payload = {
+            "deterministic": True,
             "run_id": run_id,
             "params": vars(args),
             "levels": metrics,
@@ -321,6 +326,7 @@ def main() -> None:
 
         metric_map = {m["name"]: m for m in metrics}
         summary = {
+            "deterministic": True,
             "beta1_coarse": int(metric_map["coarse"]["beta1"]),
             "beta1_mid": int(metric_map["mid"]["beta1"]),
             "beta1_fine": int(metric_map["fine"]["beta1"]),

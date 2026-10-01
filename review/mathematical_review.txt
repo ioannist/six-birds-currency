@@ -1,0 +1,432 @@
+MATHEMATICAL REVIEW — SIX BIRDS CURRENCY
+Review date: 2026-10-01. Starting checkpoint: b4a5140.
+Scope: mathematical statements, Lean semantics, numerical mechanisms, and
+claim/evidence bridges. No manuscript or frozen writing-facing artifact edited.
+Review method: direct derivations, fresh Lean compilation and transitive-axiom
+inspection, exhaustive small finite-path checks, counterexamples, corrected
+experiment reruns, and a separate adversarial self-review. This is a self-review,
+not an independent external review.
+
+DECISION AND STRONGEST JUSTIFIED CONCLUSION
+
+The user chose to preserve currency–constraint duality as a conditional result
+with explicit resource assumptions. The sound conclusion is:
+
+Given an explicitly supplied maintenance ledger, a feasible inherited budget,
+and a finite entropy closure with fixed row weights, Gibbs duality constructs
+an optimizer and its nonnegative shadow price in the finite-price regime.
+Deterministic observation cannot increase path-reversal KL. The numerical
+laboratory illustrates this structure, but packaging/persistence alone does
+not imply a resource budget, price positivity, or an optimization principle.
+
+The original finite-KL theorem was correct as stated. Its semantic domain was
+strictly positive reference laws and surjective deterministic maps. Both its
+coverage and the formal support for conditional duality are now stronger.
+
+The numerical price curve, graph ranks, predictive advantage of the aligned
+cost, and stationary packaging-defect reduction survive repair. The old
+proxy-price-stability conclusion is unsupported: the old experiment changed
+the proxy across seeds and searched designs until the desired result passed.
+Corrected fixed-design results contradict that conclusion for the default
+example. This subordinate empirical claim must be removed or independently
+re-established in a future paper phase; it is not a general consequence of
+Gibbs duality. Historical DPI numbers also require replacement because their
+finite statistic omitted singular terms. No historical numbers were erased.
+
+1. DEFINITIONS AND THE PACKAGING-TO-RESOURCE BRIDGE
+
+Locations: paper/sections/02_framework.tex, especially the four currency roles,
+"The currency–constraint principle", and "Why this is a closure law";
+paper/sections/05_discussion.tex, packaging and maintenance inevitability.
+
+A finite carrier, an idempotent packaging map, or a persistent fixed point
+supplies no spending law. Counterexample: a one-state identity kernel and
+identity packaging map have perfectly persistent packaging with identically
+zero cost. More generally persistence can coexist with an externally supplied
+unbounded ledger. No implication from persistence to bounded resource use
+follows without a resource conservation, viability, or sustainability premise.
+
+A legitimate conditional bridge starts from protocols h, nonnegative ledger
+L(h), and a resource law L(h) <= B for admissible maintenance. A macro object
+Y with maintenance protocols H_Y is feasible iff some h in H_Y obeys that law.
+This is inherited feasibility through an existential maintenance witness, not
+a claim that every numerical macro transition is realizable. If the chosen
+currency is average cost over a fixed horizon t>0, then L(h)/t <= B/t follows.
+Persistence does not supply B or the admissible protocols.
+
+The four current roles need nontriviality conditions if intended to separate
+structural currencies from arbitrary statistics. C1 permits K=Y and constant
+u; C2 permits the edge cost to ignore u; C3 imposes no explicit connection
+between u and U and allows constant U. They are admissible descriptions of
+roles, not a sufficient mathematical test of structural importance. A future
+strict definition should require essential dependence on the currency, a
+proper feasibility boundary or nonconstant potential where relevant, and an
+explicit link between the potential and the ledger.
+
+Equality constraints have unrestricted multipliers; the nonnegative price in
+the code belongs to an inequality C(q)<=b. Differentiability and uniqueness
+are needed for the expression lambda=V'(b). Without differentiability the
+correct object is a supporting supergradient of the concave value function.
+An active constraint need not have strictly positive multiplier: at the
+unconstrained threshold it can be active with lambda=0. A constant cost has
+no identifiable price. In thermodynamic notation it is inverse temperature,
+with the chosen units, that is the entropy-energy multiplier.
+
+2. FINITE KL, PATH REVERSAL, AND MECHANIZATION
+
+Location: lean/CurrencyMorphism/FiniteKL.lean.
+
+finiteKL(p,q) = sum_a q_a klFun(p_a/q_a),
+klFun(x)=x log(x)+1-x. Real division and logarithms in Lean are totalized.
+When q_a=0 and p_a>0, the contribution is zero, not infinity; therefore this
+real-valued definition is NOT extended KL on arbitrary pairs. This is now
+explicit in its docstring. Under support(p) subset support(q), including
+common zero atoms, summing the affine terms proves
+  finiteKL(p,q) = sum_a p_a log(p_a/q_a),
+with zero-numerator contributions interpreted as zero. Under this support
+premise it is ordinary finite KL, not merely an unspecified "KL-type" form.
+
+The original theorem remains available with its original signature.
+New exports:
+  finiteKL_map_le_of_support: arbitrary deterministic f, finite types,
+    support(p) subset support(q); no surjectivity requirement.
+  finiteKL_map_le_of_pos: positive-reference specialization.
+  finiteKL_eq_sum_log_of_support: the ordinary-KL semantic bridge.
+  finiteKL_nonneg and finiteKL_self: basic audit laws.
+  finiteKL_path_observe_le: actual finite paths Fin n -> alpha, pointwise
+    observation, and reversal i -> i.rev; sparse reverse support is allowed.
+  reversePath_involutive: reversal really is an involution.
+
+The proof uses Jensen fiber by fiber. Positive fiber mass permits normalized
+q weights; zero q terms have zero p by the support premise, and zero-mass
+fibers contribute zero. This establishes the claimed deterministic DPI without
+adding a theorem-sized hypothesis. The sparse finite-price domain is explicit.
+An infinite raw empirical KL is handled by the Python audit; an extended-real
+KL theorem on singular pairs has not been newly mechanized.
+
+Fresh build: Lean 4.28.0; locked mathlib revision
+8f9d9cff6bd728b17a24e163c9402775d9e6a365. CheckAxioms.lean prints actual
+transitive axiom dependencies. The reviewed exports use only propext,
+Classical.choice, and Quot.sound. There are no sorry/axiom/admit placeholders.
+The trivial bootstrap declarations are scaffolding and establish no paper claim.
+
+3. PATH AUDIT IMPLEMENTATION AND THE OLD DPI EVIDENCE
+
+Locations: src/currencymorphism/audits_pathkl.py;
+scripts/exp_dpi_scan.py; frozen docs/experiments/final/dpi_summary.csv.
+
+For the Markov path law p(x)=rho0(x0) product_t P(xt,xt+1),
+  log[p(x)/p(reverse x)] = log rho0(x0)-log rho0(xT)
+                         + sum_t log[P(xt,xt+1)/P(xt+1,xt)].
+Taking expectation gives the implemented boundary-plus-increments formula.
+Nonstationary initial laws require the boundary term. Reversibility implies
+zero path asymmetry only for a stationary reversible initial law, not for
+arbitrary rho0. Exact finite-path enumeration independently checks this
+formula, endpoint-support effects (including even/odd periodic paths), and
+singular probability mass.
+
+Previously the empirical implementation omitted any window whose reverse
+was unobserved but called the remaining finite sum its KL. This is not KL and
+need not satisfy DPI. Counterexample with ten length-two windows: nine [0,1]
+and one [2,3], observation labels [0,1,1,0]. The old micro finite sum is zero;
+the observed law has KL 0.8 log(9)>0. True micro KL is infinite, with singular
+mass 1. The frozen runs have positive raw missing-reverse mass (micro mean
+0.002052), so the old positive finite margins did not validate KL monotonicity.
+
+Raw empirical audits now return infinity on missing-reverse support. No
+windows now raises an error, because there is no empirical probability law.
+The analytic audit now computes singular mass, rather than labeling every
+singular law as having singular mass 1. With safe kernel S_ij=P_ij when the
+reverse edge exists and 0 otherwise, its value is
+  1 - sum_{j:rho0(j)>0} (rho0 S^T)_j.
+This exactly counts the event that the reversed path has zero probability,
+up to ordinary floating-point error in numerical evaluation.
+
+For a finite empirical comparison use the explicitly named reversal mixture:
+  p_epsilon=(1-epsilon)p + epsilon R_*p,  0<epsilon<1/2,
+  Sigma_epsilon=D(p_epsilon || R_*p_epsilon).
+Pointwise observation F commutes with reversal and with this mixture, hence
+DPI holds for the SAME empirical sample. This regularized statistic is not
+the unsmoothed population KL and is not advertised as an unbiased estimator.
+Its reference is positive on the union of observed and reverse support.
+Raw missing-reverse mass remains separately visible.
+
+The scan uses fixed sample sizes, epsilon=0.01, and a numerical tolerance of
+1e-10. It no longer doubles sample size until a desired sign occurs. The
+corrected five-seed minimum mean margin is 0.0037238312341975. This is a
+numerical consistency check of a mathematical inequality, not an independent
+statistical discovery of DPI. Overlapping windows need no independence for
+the same-sample inequality; they would need dependence-aware uncertainty
+analysis to estimate population KL.
+
+4. CONDITIONAL MAXIMUM-ENTROPY DUALITY: COMPLETE FINITE DERIVATION
+
+Locations: src/currencymorphism/maxcal_single.py;
+lean/CurrencyMorphism/Duality.lean; scripts/exp_budget_sweep.py.
+
+Fix finite nonempty row and destination sets, a finite cost array u_ij, and
+fixed weights mu_i>=0 with sum mu_i=1. Define
+  H_mu(q)=-sum_ij mu_i q_ij log q_ij,
+  C_mu(q)=sum_ij mu_i q_ij u_ij,
+with each row of q a probability distribution. These weights do NOT vary with
+q; replacing mu by the stationary law of q changes the optimization problem.
+
+For finite lambda, let Z_i=sum_j exp(-lambda u_ij)>0 and
+q^lambda_ij=exp(-lambda u_ij)/Z_i. Direct substitution proves
+  sum_i mu_i D(p_i || q^lambda_i)
+    = -H_mu(p)+lambda C_mu(p)+sum_i mu_i log Z_i.
+Putting p=q^lambda gives
+  H_mu(p)-lambda C_mu(p) <= H_mu(q^lambda)-lambda C_mu(q^lambda).
+For lambda>=0, C_mu(q^lambda)<=b and
+lambda(C_mu(q^lambda)-b)=0, every feasible p therefore has
+H_mu(p)<=H_mu(q^lambda). The same identity gives the supporting inequality
+  H_mu(p) <= H_mu(q^lambda)+lambda(b'-b)
+for every p feasible at b'. This is the precise shadow-price meaning.
+Rows of positive weight have a unique finite-price optimizer by strict entropy
+concavity. Rows of zero weight are unconstrained by this objective and need
+not be unique; the code chooses the Gibbs representative for all rows.
+
+Let c0=C_mu(q^0) and cmin=sum_i mu_i min_j u_ij. Differentiation gives
+  C_mu'(lambda)=-sum_i mu_i Var_{q^lambda_i}(u_i)<=0.
+If some positive-weight row is nonconstant, this derivative is strictly
+negative at every finite lambda. C_mu is continuous, decreases from c0 to
+cmin, and therefore each cmin<b<c0 has a unique finite positive price.
+For b>=c0, lambda=0 and the uniform-row law is optimal (slack for b>c0).
+For b<cmin the program is infeasible. At b=cmin the optimizer is uniform on
+each row's minimizers and generally requires lambda tending to infinity.
+If all positive-weight rows are constant, c0=cmin, the price is unidentifiable.
+On the open active interval V'(b)=lambda and
+  d lambda/db = -1/[sum_i mu_i Var(u_i)] < 0.
+These statements justify the price curve without an empirical monotonicity
+assumption. For an equality cost constraint above c0, the unrestricted Gibbs
+multiplier can be negative; the nonnegative solver is an inequality solver.
+
+Lean now CONSTRUCTS gibbsPMF from exponentials, proves normalization, strict
+positivity, and its log formula. It proves gibbs_KL_identity,
+gibbs_penalized_optimal, gibbs_budget_optimal, gibbs_budget_shadow_bound,
+and maxent_budget_optimal. The latter supplies the optimizer concretely;
+resource feasibility and complementary slackness remain explicit premises.
+The formal development is for a finite probability row. The weighted-row
+extension, monotone derivatives, inverse derivative, and infinite-price limit
+are proved above and checked numerically, not claimed as mechanized.
+
+Solver repairs: minimum endpoint returns the limiting kernel and price +inf;
+strictly infeasible budgets are rejected rather than tolerated into a false
+solution; slack detection does not erase an active bound within tolerance;
+softmax removes row offsets BEFORE multiplying; prices are not artificially
+capped at 1e6 (cost units can make a valid price much larger). Numerical roots
+remain floating-point approximations with a reported achieved cost.
+
+Interpretation limit: the cost uses the positive part of log(Pij/Pji), with
+pseudo-observation smoothing for unobserved macro transitions. This is a
+chosen nonnegative ledger, not the full stationary entropy-production rate:
+the signed microscopic increment is gauge-sensitive to state potentials,
+whereas cycle sums remove those potentials. Full stationary entropy
+production uses log[(pi_i Pij)/(pi_j Pji)]. The complete-support macro Gibbs
+model can put mass on transitions not realized by the micro substrate.
+Consequently the experiment is a synthetic closure on an estimated cost
+array, not a construction of every required micro maintenance witness.
+The retained price claim is conditional on this modeling choice.
+
+5. CONDITIONAL-LOGIT INFERENCE AND PROXY ABLATION
+
+Locations: src/currencymorphism/mle_logit.py;
+scripts/exp_proxy_ablation.py; old proxy meta.json has selected_seed_cost=9
+although requested seed_cost=0.
+
+For counts C and row totals N_i,
+  ell(lambda)=-lambda sum_ij Cij uij - sum_i N_i log Z_i,
+  ell'(lambda)=-sum_ij Cij uij + sum_i N_i E_q[u_i],
+  -ell''(lambda)=sum_i N_i Var_q(u_i)>=0.
+Identifiability requires a nonconstant cost in some row with N_i>0. Cost
+units do not destroy structural identifiability; the old absolute variance
+cutoff could incorrectly call a tiny-scale identifiable model unidentifiable.
+The corrected information uses centered squares rather than E[u^2]-E[u]^2,
+which loses precision under large row offsets.
+
+If all observed destinations minimize their row's cost while some observed
+row has nonconstant costs, no finite maximizing price exists. The supremum
+is at +infinity; the implementation now reports (inf,inf). A lower-bound
+optimum at zero can have positive information, but inverse-information scale
+is not a symmetric Wald confidence interval at that boundary. Under model
+misspecification it is a curvature scale, not an automatic sampling-error
+certificate; a sandwich calculation would be needed for general inference.
+
+The old proxy main loop changed the cost seed until the combined NLL and
+variance criterion passed; seed 9 was selected after seeds 0 through 8 did
+not meet that conjunction. It also changed the proxy permutation for each
+sampling seed. Thus its cross-seed bad-price variance mixed design changes
+with sampling variation. The old scalar values reproduce a selected
+synthetic example, not unselected evidence of inferential stability.
+
+The repaired driver uses exactly the requested cost seed, a separate fixed
+proxy seed across all samples, and reports the criterion even when false.
+At default design/permutation seeds 0, the aligned model has mean held-out
+NLL 2.10265546097 versus 2.77278983839 for the proxy. Price standard deviations
+are respectively 3.18053877347 and 0.554428806331, contradicting the old
+stability comparison. No retries conceal that result.
+
+A correct structural prediction claim can be proved: since the synthetic
+truth is q_good, any fixed different proxy kernel has expected excess NLL
+D(q_good || q_proxy)>=0 (with row weights), strictly positive unless it
+matches on all positive-weight rows. This does not imply larger variance
+of its fitted price. Prices from different cost coordinates are not a
+universal common-scale stability observable. Prediction survives; the
+price-stability subclaim must be omitted or established by a separate,
+predeclared experiment with a justified comparable metric.
+
+6. RESOLUTION LADDER AND CYCLE COORDINATES
+
+Locations: src/currencymorphism/audits_cycles.py;
+scripts/exp_currency_ladder.py; paper/sections/04_results.tex ladder subsection.
+
+For a finite SIMPLE undirected bidirectional-support graph, excluding
+self-loops, beta1=m-n+c is the dimension of its cycle space. The map sending
+antisymmetric edge forms to their cycle integrals has rank beta1; zero cycle
+integrals mean the edge form is a vertex-potential gradient on each connected
+component. For bidirectional Markov kernels this is the Kolmogorov cycle
+criterion for reversible dynamics within those components. One-way edges
+are excluded from this finite-affinity audit, not declared thermodynamically
+reversible; they are separately detected by the path KL audit.
+
+Tiny positive bidirectional probabilities were silently discarded by the
+old default 1e-15 affinity threshold while the graph used threshold zero.
+That mismatch could turn a real cycle drive into zero. The default is now
+zero in both places, and invalid cycles or unsupported cycle edges are
+rejected. Affinity-vector norms are basis-dependent; comparisons describe
+the selected basis, not an intrinsic norm on a basis-free currency space.
+
+For M rings of even length L>=4 and positive bridge weight, with bridges
+at 0 and L/2 between adjacent rings, the constructed ladder has EXACT ranks:
+  coarse: M vertices, M-1 edges, rank 0;
+  middle: 2M vertices, 3M-2 edges, rank M-1;
+  fine: ML vertices, ML+2(M-1) edges, rank 2M-1.
+For M=6 these are 0,5,11. The code's seeds do not affect the construction;
+repeated seed labels are identical deterministic runs, not independent
+robustness evidence. Metadata now says so.
+
+This is dimension of AVAILABLE graph cycle coordinates, not the rank of
+independently tunable drive parameters. The chosen family has M affinity
+parameters, and the fine affinity-family map has rank M=6, not 11. Row
+normalization adds only a gradient to log edge ratios; therefore a cycle
+integral is linear in the A_m with coefficient equal to signed traversal
+count in ring m divided by L. Whole-ring cycles recover each A_m, establishing
+rank M. The middle graph has nontrivial cycle space but its affinities vanish
+up to roundoff in this symmetric construction. Half-ring translation swaps
+the two rows of the macro ladder, preserves the irreducible kernel and its
+stationary law, and makes rectangular cycle affinities cancel. Graph capacity
+and active drive must not be identified.
+
+No universal monotonic graph-rank law follows from finer resolution. A
+four-vertex path is a tree (rank 0); identifying its endpoints gives a triangle
+(rank 1), even with reversible dynamics. This counterexample is a regression
+test. The correct retained ladder claim is the explicit constructed family's
+cycle-space ranks, not a theorem for arbitrary lenses.
+
+7. PACKAGING STABILITY: A PROVABLE REPAIR
+
+Locations: src/currencymorphism/packaging.py;
+scripts/exp_idempotence_vs_budget.py.
+
+For row distributions, let B be pushforward followed by stationary-conditional
+lifting. Then B^2=B, B is stochastic, and E(mu)=mu P^tau B. Its idempotence
+defect is ||mu (P^tau B)^2 - mu P^tau B||_1, between 0 and 2. Small defect of
+a given packaged image is not a proof of universal fixed-point convergence.
+For stationary prototypes, the maximum over lifted macro basis states equals
+the worst defect over lifted macro distributions: convexity gives <=max and
+the basis state attaining max gives equality. The reported mean is only a
+summary, not that worst-case bound; max is also recorded. For arbitrary
+inputs, E(mu) is a lifted distribution, so the exit bound below still applies.
+
+Let pi be stationary with positive mass on every block, and let
+  epsilon=max_i sum_{j:f(j)!=f(i)} Pij.
+For the conditional prototype nu_a=pi(.|a), stationarity gives
+  ||nu_a P - nu_a||_1 <= 2 [stationary outgoing flow from a]/pi(a)
+                         <= 2 epsilon.
+Indeed inside a, the change is the negative of incoming flow from outside a
+divided by pi(a); outside a it is outgoing flow from a divided by pi(a).
+Stationarity equates their total masses. Telescope over tau steps using L1
+contraction to get ||nu_a P^tau-nu_a||_1<=2 tau epsilon. Since nu_a B=nu_a
+and B contracts L1, ||E(nu_a)-nu_a||_1<=2 tau epsilon. Convex combination
+extends this to any lifted distribution, including E(mu). Hence
+  ||E(E(mu))-E(mu)||_1 <= min(2, 2 tau epsilon)
+for every probability mu. This proof uses stationarity, positive block masses,
+finite tau, and the stationary prototype; it is not asserted for a uniform
+prototype of a nonuniform within-block chain.
+
+The controlled kernel scales inter-block base probabilities by exp(-lambda)
+and renormalizes rows. Write r_i for base intrablock mass and s_i=1-r_i.
+Then exit probability is
+  s_i exp(-lambda) / [r_i+s_i exp(-lambda)].
+If every r_i>0 (true in the module-ring laboratory), this tends to zero,
+and is bounded by (s_i/r_i) exp(-lambda). Therefore packaging defect tends
+to zero with the explicit bound above. This is stronger than the sampled
+monotone curve: it is a uniform finite-time vanishing-defect theorem for
+stationary prototypes. It does NOT prove that actual defect must decrease
+monotonically for every parameter value in every kernel family, since the
+prototypes vary with lambda and the upper bound need not be saturated.
+If some r_i=0, increasing price may cancel entirely on that row, and no
+vanishing-exit conclusion follows.
+
+The experiment's b is from a DIFFERENT auxiliary complete-support macro
+Gibbs kernel; it is not the stationary cost of the controlled micro kernel.
+The calibration b->lambda is valid, but its achieved cost must not be called
+achieved micro maintenance cost. New output includes calibration_cost,
+controlled_stationary_cost, controlled_max_exit, and stationary_defect_bound.
+For the default sweep calibration minimum is 0.0416667 while minimum actual
+stationary controlled cost is 0.000144848. The defect endpoints remain
+0.001443300175 and 0.115964475615, and every sampled defect satisfies the
+new theoretical bound. The corrected interpretation is enforcement by a
+calibrated penalty price, with actual spending separately measured.
+
+8. NUMERICAL DOMAIN INTEGRITY AND REPLAY
+
+Additional repairs reject nonfinite/negative probabilities, fractional
+partition labels previously truncated to integers, false stationary witnesses
+for stationary-conditional lumping/lifting, and fake cycles. Stationary power
+iteration uses lazification, preserving stationary laws while removing
+periodic oscillation; an eigenvector modified by clipping must pass a
+stationarity residual check. These checks protect mathematical assumptions;
+they do not turn floating arithmetic into exact or interval certificates.
+
+Reproducible corrected evidence:
+  PYTHONPATH=src MPLBACKEND=Agg python3 scripts/math_review_checks.py
+  PYTHONPATH=src python3 -m pytest -q
+  ruff check .
+  cd lean && lake build
+  cd lean && lake env lean CheckAxioms.lean
+
+Use an environment with the declared Python experiment dependencies installed.
+The review runner writes review/*_checked.csv and numerical_receipt.json,
+retains all outcomes, records source hashes, and leaves docs/experiments/final
+and paper/ unchanged. The old frozen reproducibility audit is historical and
+is not expected to numerically match the corrected DPI or proxy design.
+Future final-pack summaries now identify the audit, proxy policy, separate
+prediction/stability statuses, and auxiliary calibration role.
+
+9. ADVERSARIAL SELF-REVIEW AND REMAINING COVERAGE LIMITS
+
+The final pass specifically checked:
+- positive-reference and common-zero support semantics, empty image fibers,
+  actual path reversal and observation commutation;
+- no resource law inferred from a fixed point, and no optimizer or price
+  existence inferred from an uninterpreted record field;
+- Gibbs construction and normalization rather than assumed optimizer input;
+- explicit feasibility, inequality-price sign, complementary slackness,
+  degenerate costs, zero row weights, and infinite-price boundaries;
+- boundary support and periodicity in the analytic path audit;
+- sample-law DPI rather than a Markov approximation of observed paths;
+- unbiased design reporting rather than retry-until-success evidence;
+- cycle-space capacity versus active parameter dimension and basis norms;
+- calibration spending versus spending of the actually controlled kernel;
+- a stationary-prototype return to the ORIGINAL packaged state space in the
+  exit bound, with constants uniform over every input distribution.
+
+Remaining scope is deliberate: Lean mechanizes finite supported KL and
+single-row Gibbs conditional duality. It does not mechanize the whole
+Markov laboratory, the weighted-array differential calculus, empirical
+uncertainty, or the packaging exit estimate. No universal empirical
+cross-layer economics law or automatic persistence-to-budget theorem is
+claimed by this review. The manuscript awaits the later editing phase and
+still contains the original overstatements listed above; this review is the
+mathematical handoff for that phase.

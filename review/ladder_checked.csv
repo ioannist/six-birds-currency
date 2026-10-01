@@ -1,0 +1,4 @@
+name,k,beta1_mean,beta1_std,basis_size_mean,basis_size_std,aff_norm_mean,aff_norm_std,n_seeds
+coarse,6,0.0,0.0,0.0,0.0,0.0,0.0,5
+mid,12,5.0,0.0,5.0,0.0,6.653932544407803e-15,7.888609052210118e-31,5
+fine,60,11.0,0.0,11.0,0.0,1.415097169808491,0.0,5

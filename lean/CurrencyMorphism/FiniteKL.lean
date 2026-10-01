@@ -14,6 +14,9 @@ variable {α β : Type}
 def fiber [Fintype α] [DecidableEq α] [DecidableEq β] (f : α → β) (b : β) : Finset α :=
   Finset.univ.filter (fun a => f a = b)
 
+/-- Real finite KL form. It agrees with ordinary KL when `p` is supported
+on `q`. Without that hypothesis, zero denominators use Lean's totalized
+real division and this definition must NOT be interpreted as extended KL. -/
 noncomputable def finiteKL [Fintype α] [DecidableEq α] (p q : PMF α) : ℝ :=
   ∑ a, (q a).toReal * klFun ((p a).toReal / (q a).toReal)
 
@@ -46,9 +49,9 @@ lemma map_toReal_pos [Fintype α] [DecidableEq α] [DecidableEq β]
     exact Finset.single_le_sum (fun a ha => ENNReal.toReal_nonneg) hmem
   exact lt_of_lt_of_le (hq a0) hle
 
-lemma fiber_jensen [Fintype α] [DecidableEq α] [DecidableEq β]
+lemma fiber_jensen_of_support [Fintype α] [DecidableEq α] [DecidableEq β]
     (f : α → β) (p q : PMF α)
-    (hq : ∀ a, 0 < (q a).toReal)
+    (hsupport : ∀ a, (q a).toReal = 0 → (p a).toReal = 0)
     (b : β)
     (hQ : 0 < ∑ a ∈ fiber f b, (q a).toReal) :
     (∑ a ∈ fiber f b, (q a).toReal) *
@@ -87,14 +90,14 @@ lemma fiber_jensen [Fintype α] [DecidableEq α] [DecidableEq β]
       (InformationTheory.convexOn_klFun.map_sum_le (t := t) (w := w) (p := x) h0 h1 hmem)
 
   have hxsum : ∑ a ∈ t, w a * x a = Pb / Qb := by
-    have hqa_ne : ∀ a, (q a).toReal ≠ 0 := fun a => ne_of_gt (hq a)
     calc
       ∑ a ∈ t, w a * x a = ∑ a ∈ t, (p a).toReal / Qb := by
         refine Finset.sum_congr rfl ?_
         intro a ha
-        have hqa_ne_a : (q a).toReal ≠ 0 := hqa_ne a
-        dsimp [w, x]
-        field_simp [hQb_ne, hqa_ne_a]
+        by_cases hqa : (q a).toReal = 0
+        · simp [w, x, hqa, hsupport a hqa]
+        · dsimp [w, x]
+          field_simp [hQb_ne, hqa]
       _ = (∑ a ∈ t, (p a).toReal) / Qb := by
         simpa using (Finset.sum_div t (fun a => (p a).toReal) Qb).symm
       _ = Pb / Qb := by simp [Pb]
@@ -127,10 +130,10 @@ lemma fiber_jensen [Fintype α] [DecidableEq α] [DecidableEq β]
       simp [t]
 
 
-theorem finiteKL_map_le [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
-    (f : α → β) (hf : Function.Surjective f)
+theorem finiteKL_map_le_of_support [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    (f : α → β)
     (p q : PMF α)
-    (hq : ∀ a, 0 < (q a).toReal) :
+    (hsupport : ∀ a, (q a).toReal = 0 → (p a).toReal = 0) :
     finiteKL (PMF.map f p) (PMF.map f q) ≤ finiteKL p q := by
   have hmain :
       ∀ b,
@@ -139,11 +142,14 @@ theorem finiteKL_map_le [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq 
         ≤
       ∑ a ∈ fiber f b, (q a).toReal * klFun ((p a).toReal / (q a).toReal) := by
     intro b
-    have h := map_toReal_pos f hf q hq b
-    have hQ : 0 < ∑ a ∈ fiber f b, (q a).toReal := by
-      rw [map_toReal_eq_sum_fiber] at h
-      exact h
-    exact fiber_jensen f p q hq b hQ
+    by_cases hQ : 0 < ∑ a ∈ fiber f b, (q a).toReal
+    · exact fiber_jensen_of_support f p q hsupport b hQ
+    · have hzero : (∑ a ∈ fiber f b, (q a).toReal) = 0 :=
+        le_antisymm (le_of_not_gt hQ)
+          (Finset.sum_nonneg (fun _ _ => ENNReal.toReal_nonneg))
+      rw [hzero, zero_mul]
+      exact Finset.sum_nonneg fun a _ => mul_nonneg ENNReal.toReal_nonneg
+        (klFun_nonneg (div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg))
 
   have hL :
       finiteKL (PMF.map f p) (PMF.map f q)
@@ -168,6 +174,123 @@ theorem finiteKL_map_le [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq 
 
   rw [hL, hR]
   exact Finset.sum_le_sum (fun b hb => hmain b)
+
+
+/-- Finite KL data processing with full-support reference and any deterministic map. -/
+theorem finiteKL_map_le_of_pos [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    (f : α → β) (p q : PMF α) (hq : ∀ a, 0 < (q a).toReal) :
+    finiteKL (PMF.map f p) (PMF.map f q) ≤ finiteKL p q :=
+  finiteKL_map_le_of_support f p q (fun a h => (ne_of_gt (hq a) h).elim)
+
+/-- Original Jensen API. -/
+lemma fiber_jensen [Fintype α] [DecidableEq α] [DecidableEq β]
+    (f : α → β) (p q : PMF α) (hq : ∀ a, 0 < (q a).toReal)
+    (b : β) (hQ : 0 < ∑ a ∈ fiber f b, (q a).toReal) :
+    (∑ a ∈ fiber f b, (q a).toReal) *
+      klFun ((∑ a ∈ fiber f b, (p a).toReal) / (∑ a ∈ fiber f b, (q a).toReal)) ≤
+      ∑ a ∈ fiber f b, (q a).toReal * klFun ((p a).toReal / (q a).toReal) :=
+  fiber_jensen_of_support f p q (fun a h => (ne_of_gt (hq a) h).elim) b hQ
+
+/-- Original API, retained for downstream consumers. Surjectivity is unnecessary. -/
+theorem finiteKL_map_le [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    (f : α → β) (_hf : Function.Surjective f)
+    (p q : PMF α) (hq : ∀ a, 0 < (q a).toReal) :
+    finiteKL (PMF.map f p) (PMF.map f q) ≤ finiteKL p q :=
+  finiteKL_map_le_of_pos f p q hq
+
+lemma finiteKL_nonneg [Fintype α] [DecidableEq α] (p q : PMF α) :
+    0 ≤ finiteKL p q := by
+  exact Finset.sum_nonneg fun a _ =>
+    mul_nonneg ENNReal.toReal_nonneg
+      (klFun_nonneg (div_nonneg ENNReal.toReal_nonneg ENNReal.toReal_nonneg))
+
+@[simp] lemma finiteKL_self [Fintype α] [DecidableEq α] (p : PMF α) :
+    finiteKL p p = 0 := by
+  unfold finiteKL
+  apply Finset.sum_eq_zero
+  intro a _
+  by_cases h : (p a).toReal = 0
+  · simp [h]
+  · simp [div_self h, klFun_one]
+
+lemma sum_toReal [Fintype α] (p : PMF α) : ∑ a, (p a).toReal = 1 := by
+  rw [← ENNReal.toReal_sum (fun a _ => PMF.apply_ne_top p a)]
+  have h : ∑ a, p a = 1 := by simpa [tsum_fintype] using p.tsum_coe
+  simp [h]
+
+/-- Semantic bridge to the conventional `sum p log(p/q)` formula, including
+zero numerator terms under the convention `0 log 0 = 0`. -/
+theorem finiteKL_eq_sum_log_of_support [Fintype α] [DecidableEq α]
+    (p q : PMF α) (hsupport : ∀ a, (q a).toReal = 0 → (p a).toReal = 0) :
+    finiteKL p q = ∑ a, (p a).toReal * Real.log ((p a).toReal / (q a).toReal) := by
+  have hterm : ∀ a, (q a).toReal * klFun ((p a).toReal / (q a).toReal) =
+      (p a).toReal * Real.log ((p a).toReal / (q a).toReal) +
+        (q a).toReal - (p a).toReal := by
+    intro a
+    by_cases hqa : (q a).toReal = 0
+    · simp [hqa, hsupport a hqa]
+    · unfold klFun
+      field_simp [hqa]
+  unfold finiteKL
+  simp_rw [hterm]
+  rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, sum_toReal, sum_toReal]
+  ring
+
+/-- Full-support specialization of the ordinary KL bridge. -/
+theorem finiteKL_eq_sum_log [Fintype α] [DecidableEq α]
+    (p q : PMF α) (hq : ∀ a, 0 < (q a).toReal) :
+    finiteKL p q = ∑ a, (p a).toReal * Real.log ((p a).toReal / (q a).toReal) :=
+  finiteKL_eq_sum_log_of_support p q (fun a h => (ne_of_gt (hq a) h).elim)
+
+/-- Coarse observation and reversal commute. The reference law need only
+be positive here; the pushforward need not be onto its declared codomain. -/
+theorem finiteKL_reversal_map_le_of_support [Fintype α] [Fintype β]
+    [DecidableEq α] [DecidableEq β]
+    (f : α → β) (r : α → α) (s : β → β)
+    (hcomm : ∀ a, f (r a) = s (f a))
+    (p : PMF α)
+    (hsupport : ∀ a, ((PMF.map r p) a).toReal = 0 → (p a).toReal = 0) :
+    finiteKL (PMF.map f p) (PMF.map s (PMF.map f p)) ≤
+      finiteKL p (PMF.map r p) := by
+  have heq : PMF.map f (PMF.map r p) = PMF.map s (PMF.map f p) := by
+    simp only [PMF.map_comp]
+    congr 1
+    funext a
+    exact hcomm a
+  rw [← heq]
+  exact finiteKL_map_le_of_support f p (PMF.map r p) hsupport
+
+/-- Full-support specialization of reversal/coarsening data processing. -/
+theorem finiteKL_reversal_map_le [Fintype α] [Fintype β]
+    [DecidableEq α] [DecidableEq β]
+    (f : α → β) (r : α → α) (s : β → β)
+    (hcomm : ∀ a, f (r a) = s (f a))
+    (p : PMF α) (hq : ∀ a, 0 < ((PMF.map r p) a).toReal) :
+    finiteKL (PMF.map f p) (PMF.map s (PMF.map f p)) ≤
+      finiteKL p (PMF.map r p) :=
+  finiteKL_reversal_map_le_of_support f r s hcomm p
+    (fun a h => (ne_of_gt (hq a) h).elim)
+
+def reversePath {n : ℕ} (x : Fin n → α) : Fin n → α := fun i => x i.rev
+
+def observePath {n : ℕ} (f : α → β) (x : Fin n → α) : Fin n → β := fun i => f (x i)
+
+lemma reversePath_involutive (n : ℕ) : Function.Involutive (@reversePath α n) := by
+  intro x
+  funext i
+  simp [reversePath]
+
+/-- Actual finite-path specialization: pointwise observation commutes with
+path-order reversal, and sparse reversible support is allowed. -/
+theorem finiteKL_path_observe_le [Fintype α] [Fintype β]
+    [DecidableEq α] [DecidableEq β] (n : ℕ) (f : α → β)
+    (p : PMF (Fin n → α))
+    (hsupport : ∀ x, ((PMF.map reversePath p) x).toReal = 0 → (p x).toReal = 0) :
+    finiteKL (PMF.map (observePath f) p)
+      (PMF.map reversePath (PMF.map (observePath f) p)) ≤
+      finiteKL p (PMF.map reversePath p) :=
+  finiteKL_reversal_map_le_of_support (observePath f) reversePath reversePath
+    (fun _ => rfl) p hsupport
 
 
 def collapse4 : Fin 4 → Bool := fun i => i.1 < 2

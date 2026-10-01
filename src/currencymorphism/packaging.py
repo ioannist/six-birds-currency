@@ -25,10 +25,10 @@ def E_tau_f(
     if K.ndim != 2 or K.shape[0] != K.shape[1]:
         msg = f"P must be square, got shape {K.shape}."
         raise ValueError(msg)
-    if np.any(K < -1e-14):
-        msg = "P must be nonnegative up to numerical tolerance."
+    if not np.isfinite(K).all() or np.any(K < 0.0):
+        msg = "P must be finite and nonnegative."
         raise ValueError(msg)
-    if not np.allclose(K.sum(axis=1), 1.0, atol=1e-10):
+    if not np.allclose(K.sum(axis=1), 1.0, atol=1e-10, rtol=0.0):
         msg = "P must be row-stochastic (rows sum to 1)."
         raise ValueError(msg)
 
@@ -37,16 +37,16 @@ def E_tau_f(
     if mu_arr.ndim != 1 or mu_arr.shape[0] != n:
         msg = f"mu must have shape ({n},), got {mu_arr.shape}."
         raise ValueError(msg)
-    if np.any(mu_arr < 0.0):
+    if not np.isfinite(mu_arr).all() or np.any(mu_arr < 0.0):
         msg = "mu must be nonnegative."
         raise ValueError(msg)
     total = float(mu_arr.sum())
-    if total <= 0.0:
-        msg = "mu must have positive total mass."
+    if not np.isfinite(total) or total <= 0.0:
+        msg = "mu must have positive finite total mass."
         raise ValueError(msg)
     mu_arr = mu_arr / total
 
-    part_arr = np.asarray(part, dtype=np.int64)
+    part_arr = np.asarray(part)
     _ = pushforward_dist(np.ones(n, dtype=np.float64), part_arr)
 
     nu = mu_arr.copy()
@@ -63,6 +63,13 @@ def E_tau_f(
             if pi_micro is None
             else np.asarray(pi_micro, dtype=np.float64)
         )
+        if pi.shape != (n,) or not np.isfinite(pi).all() or np.any(pi < 0.0):
+            raise ValueError("pi_micro must be a finite nonnegative state vector.")
+        if pi.sum() <= 0.0:
+            raise ValueError("pi_micro must have positive mass.")
+        pi = pi / pi.sum()
+        if not np.allclose(pi @ K, pi, atol=1e-10, rtol=0.0):
+            raise ValueError("pi_micro must be stationary for P.")
         lifted = lift_dist(rho_macro, part_arr, scheme="stationary", pi_micro=pi)
     else:
         msg = f"Unsupported prototype: {prototype!r}."
@@ -70,7 +77,7 @@ def E_tau_f(
 
     lifted = np.clip(lifted, 0.0, None)
     mass = float(lifted.sum())
-    if mass <= 0.0:
+    if not np.isfinite(mass) or mass <= 0.0:
         msg = "Packaged distribution has zero mass after clipping."
         raise RuntimeError(msg)
     lifted = lifted / mass

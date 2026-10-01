@@ -9,6 +9,9 @@ from currencymorphism.markov import stationary_dist
 
 def _validate_part(part: np.ndarray, n: int | None = None) -> np.ndarray:
     """Validate partition labels as contiguous integers 0..k-1."""
+    raw = np.asarray(part)
+    if not np.issubdtype(raw.dtype, np.integer):
+        raise ValueError("Partition labels must have integer dtype.")
     p = np.asarray(part, dtype=np.int64)
     if p.ndim != 1:
         msg = f"part must be a 1D array, got shape {p.shape}."
@@ -67,7 +70,7 @@ def pushforward_dist(rho: np.ndarray, part: np.ndarray) -> np.ndarray:
     if rho_arr.ndim != 1 or rho_arr.shape[0] != p.shape[0]:
         msg = f"rho must have shape ({p.shape[0]},), got {rho_arr.shape}."
         raise ValueError(msg)
-    if np.any(rho_arr < 0.0):
+    if not np.isfinite(rho_arr).all() or np.any(rho_arr < 0.0):
         msg = "rho must be nonnegative."
         raise ValueError(msg)
 
@@ -96,7 +99,7 @@ def lift_dist(
     if rho_m.ndim != 1 or rho_m.shape[0] != k:
         msg = f"rho_macro must have shape ({k},), got {rho_m.shape}."
         raise ValueError(msg)
-    if np.any(rho_m < 0.0):
+    if not np.isfinite(rho_m).all() or np.any(rho_m < 0.0):
         msg = "rho_macro must be nonnegative."
         raise ValueError(msg)
 
@@ -113,7 +116,7 @@ def lift_dist(
         if pi.ndim != 1 or pi.shape[0] != n:
             msg = f"pi_micro must have shape ({n},), got {pi.shape}."
             raise ValueError(msg)
-        if np.any(pi < 0.0):
+        if not np.isfinite(pi).all() or np.any(pi < 0.0):
             msg = "pi_micro must be nonnegative."
             raise ValueError(msg)
 
@@ -143,10 +146,10 @@ def lumped_kernel(
     if K.ndim != 2 or K.shape[0] != K.shape[1]:
         msg = f"P must be square, got shape {K.shape}."
         raise ValueError(msg)
-    if np.any(K < -1e-14):
-        msg = "P must be nonnegative up to numerical tolerance."
+    if not np.isfinite(K).all() or np.any(K < 0.0):
+        msg = "P must be finite and nonnegative."
         raise ValueError(msg)
-    if not np.allclose(K.sum(axis=1), 1.0, atol=1e-10):
+    if not np.allclose(K.sum(axis=1), 1.0, atol=1e-10, rtol=0.0):
         msg = "P must be row-stochastic (rows sum to 1)."
         raise ValueError(msg)
 
@@ -161,14 +164,17 @@ def lumped_kernel(
         if pi_micro.ndim != 1 or pi_micro.shape[0] != n:
             msg = f"pi must have shape ({n},), got {pi_micro.shape}."
             raise ValueError(msg)
-        if np.any(pi_micro < 0.0):
+        if not np.isfinite(pi_micro).all() or np.any(pi_micro < 0.0):
             msg = "pi must be nonnegative."
             raise ValueError(msg)
         total = float(pi_micro.sum())
-        if total <= 0.0:
-            msg = "pi must have positive total mass."
+        if not np.isfinite(total) or total <= 0.0:
+            msg = "pi must have positive finite total mass."
             raise ValueError(msg)
         pi_micro = pi_micro / total
+
+    if not np.allclose(pi_micro @ K, pi_micro, atol=1e-10, rtol=0.0):
+        raise ValueError("pi must be stationary for P.")
 
     pi_macro = np.bincount(p, weights=pi_micro, minlength=k).astype(np.float64)
     if np.any(pi_macro == 0.0):

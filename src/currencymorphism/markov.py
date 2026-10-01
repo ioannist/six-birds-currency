@@ -11,7 +11,9 @@ def normalize_rows(A: np.ndarray, eps: float = 0.0) -> np.ndarray:
     if P.ndim != 2:
         msg = f"A must be 2D, got shape {P.shape}."
         raise ValueError(msg)
-    if eps < 0:
+    if not np.isfinite(P).all():
+        raise ValueError("A must contain finite entries.")
+    if not np.isfinite(eps) or eps < 0:
         msg = f"eps must be nonnegative, got {eps}."
         raise ValueError(msg)
 
@@ -20,6 +22,8 @@ def normalize_rows(A: np.ndarray, eps: float = 0.0) -> np.ndarray:
 
     P = np.clip(P, 0.0, None)
     row_sums = P.sum(axis=1)
+    if not np.isfinite(row_sums).all():
+        raise ValueError("Row masses must be finite.")
     if np.any(row_sums == 0.0):
         zero_rows = np.where(row_sums == 0.0)[0]
         msg = (
@@ -43,28 +47,31 @@ def stationary_dist(
         msg = f"P must be a square 2D array, got shape {K.shape}."
         raise ValueError(msg)
 
-    if np.any(K < -1e-14):
+    if not np.isfinite(K).all() or np.any(K < 0.0):
         msg = "P has negative entries beyond numerical tolerance."
         raise ValueError(msg)
 
     row_sums = K.sum(axis=1)
-    if not np.allclose(row_sums, 1.0, atol=1e-10):
+    if not np.allclose(row_sums, 1.0, atol=1e-10, rtol=0.0):
         msg = "P must be row-stochastic (rows sum to 1 within tolerance)."
         raise ValueError(msg)
 
     n_states = K.shape[0]
+    if n_states == 0 or not np.isfinite(tol) or tol <= 0.0 or max_iter <= 0:
+        raise ValueError("Require nonempty P, positive finite tol, and max_iter > 0.")
 
     if method == "power":
         pi = np.full(n_states, 1.0 / n_states, dtype=np.float64)
         for _ in range(max_iter):
-            nxt = pi @ K
+            # Lazification preserves stationary laws and removes periodic oscillation.
+            nxt = 0.5 * pi + 0.5 * (pi @ K)
             nxt = np.clip(nxt, 0.0, None)
             total = float(nxt.sum())
-            if total <= 0.0:
+            if not np.isfinite(total) or total <= 0.0:
                 msg = "Power iteration produced a zero vector after clipping."
                 raise RuntimeError(msg)
             nxt /= total
-            if np.linalg.norm(nxt - pi, ord=1) < tol:
+            if np.linalg.norm(nxt @ K - nxt, ord=1) < tol:
                 return nxt
             pi = nxt
 
@@ -81,10 +88,15 @@ def stationary_dist(
         if float(vec.sum()) <= 0.0:
             vec = np.abs(np.real(vecs[:, idx]))
         total = float(vec.sum())
-        if total <= 0.0:
+        if not np.isfinite(total) or total <= 0.0:
             msg = "Eigenvector method failed to extract a nonzero stationary vector."
             raise RuntimeError(msg)
-        return vec / total
+        pi = vec / total
+        if np.linalg.norm(pi @ K - pi, ord=1) > max(tol, 1e-10):
+            raise RuntimeError(
+                "Extracted eigenvector is not stationary after clipping."
+            )
+        return pi
 
     msg = f"Unknown method: {method!r}. Use 'power' or 'eigs'."
     raise ValueError(msg)
@@ -93,12 +105,18 @@ def stationary_dist(
 def simulate(P: np.ndarray, x0: int, T: int, rng: np.random.Generator) -> np.ndarray:
     """Simulate one trajectory of length T+1 including the initial state."""
     K = np.asarray(P, dtype=np.float64)
-    n_states = K.shape[0]
     if K.ndim != 2 or K.shape[0] != K.shape[1]:
         msg = f"P must be square, got shape {K.shape}."
         raise ValueError(msg)
-    if T < 0:
-        msg = f"T must be nonnegative, got {T}."
+    n_states = K.shape[0]
+    if (
+        not np.isfinite(K).all()
+        or np.any(K < 0.0)
+        or not np.allclose(K.sum(axis=1), 1.0, atol=1e-10, rtol=0.0)
+    ):
+        raise ValueError("P must be a finite row-stochastic kernel.")
+    if not isinstance(T, (int, np.integer)) or T < 0:
+        msg = f"T must be a nonnegative integer, got {T}."
         raise ValueError(msg)
     if not (0 <= x0 < n_states):
         msg = f"x0 must be in [0, {n_states}), got {x0}."
@@ -130,13 +148,24 @@ def simulate_many(
     if x0.ndim != 1 or x0.shape[0] != n_states:
         msg = f"x0_dist must have shape ({n_states},), got {x0.shape}."
         raise ValueError(msg)
-    if T < 0:
-        msg = f"T must be nonnegative, got {T}."
+    n_states = K.shape[0]
+    if (
+        not np.isfinite(K).all()
+        or np.any(K < 0.0)
+        or not np.allclose(K.sum(axis=1), 1.0, atol=1e-10, rtol=0.0)
+    ):
+        raise ValueError("P must be a finite row-stochastic kernel.")
+    if not isinstance(T, (int, np.integer)) or T < 0:
+        msg = f"T must be a nonnegative integer, got {T}."
         raise ValueError(msg)
     if N <= 0:
         msg = f"N must be positive, got {N}."
         raise ValueError(msg)
-    if np.any(x0 < 0.0) or not np.isclose(x0.sum(), 1.0, atol=1e-12):
+    if (
+        not np.isfinite(x0).all()
+        or np.any(x0 < 0.0)
+        or not np.isclose(x0.sum(), 1.0, atol=1e-12, rtol=0.0)
+    ):
         msg = "x0_dist must be a valid probability distribution."
         raise ValueError(msg)
 
@@ -161,6 +190,8 @@ def empirical_counts(seq: np.ndarray, n_states: int) -> np.ndarray:
         msg = f"n_states must be positive, got {n_states}."
         raise ValueError(msg)
 
+    if not np.issubdtype(arr.dtype, np.integer):
+        raise ValueError("State indices must have integer dtype.")
     counts = np.zeros((n_states, n_states), dtype=np.int64)
 
     if arr.ndim == 1:

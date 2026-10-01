@@ -1,0 +1,124 @@
+{
+  "checkpoint": "b4a5140",
+  "commands": {
+    "dpi": {
+      "script": "exp_dpi_scan.py",
+      "arguments": [
+        "--seeds",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "exit_code": 0
+    },
+    "budget": {
+      "script": "exp_budget_sweep.py",
+      "arguments": [
+        "--seeds",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "exit_code": 0
+    },
+    "ladder": {
+      "script": "exp_currency_ladder.py",
+      "arguments": [
+        "--seeds",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "exit_code": 0
+    },
+    "proxy": {
+      "script": "exp_proxy_ablation.py",
+      "arguments": [],
+      "exit_code": 0
+    },
+    "idempotence": {
+      "script": "exp_idempotence_vs_budget.py",
+      "arguments": [],
+      "exit_code": 0
+    }
+  },
+  "source_sha256": {
+    "lean/CheckAxioms.lean": "058e842730179f29649db6f520edf0320937dda64bdc8b824aa29b97941a4710",
+    "lean/CurrencyMorphism/Basic.lean": "b94b4145f86d047a673ff4765390725a5f1f7f62d9a54fc0ba80589eb1ac7f73",
+    "lean/CurrencyMorphism/Duality.lean": "37d33ba2470321e6c315fabdd6a8e5b8d27a2744ff55a51ed802f4a11cac7c54",
+    "lean/CurrencyMorphism/FiniteKL.lean": "c27c8e92a7b66415fc1d856f0cab7cd82ea81e40ac87e6abe6980e00148500c8",
+    "lean/CurrencyMorphism.lean": "93fa41450cd24e33cfb1ce5adb2bdb6886fa9b5a1c5aac12bccd4eb5af899c92",
+    "scripts/demo_maxcal_single.py": "b746a26f3242df7811efc43b7519b2caf73b98b3db10f68b5eef34fd60c80864",
+    "scripts/demo_stationary.py": "6514a99c1cbd966d3a291c845284d6754c6fe8bd19861ac9f7fad6c51ec428a8",
+    "scripts/exp_budget_sweep.py": "b8bab74fe47b8700a73f24acee2d29139ccbd5f70a75f28f3516811a3dd3732a",
+    "scripts/exp_currency_ladder.py": "6318be5b87f1334d26f0aac5eb083a312fe882b0f04d0888471f60cfd28556c2",
+    "scripts/exp_dpi_scan.py": "650c90240bfdb26640c46344410f9af3234b4975c4c97771e6eddca75d548106",
+    "scripts/exp_idempotence_vs_budget.py": "bbce8b545b05a5f9dceed8a08dce47561d103081ff2c29fae3dcd810ce06ce36",
+    "scripts/exp_proxy_ablation.py": "e1f1c8b8a3686f1890ceeed525e6451f8f2a06e8a0b8af7759017db5eae167a7",
+    "scripts/export_final_assets.py": "1ac0b93f7c4bf3f0b4cf4a20951a484b292d2d6ddcbddbe4439ed0c8329c2a4a",
+    "scripts/final_evidence_pack.py": "4f53308b0ae7e6bceb18e27a629119bfd76c17ec004696a61fc9a40893525d3c",
+    "scripts/index_results.py": "f8fef5d7af55a38aca9ac286b50e7eaa8512743cad0b54d78cdb7cdd7225752d",
+    "scripts/math_review_checks.py": "b416d36b12b158019866c1ef05d457b5ff291c33ea587c259b95beebfaf57045",
+    "scripts/repro_audit.py": "aa972d1de874cefc901840d88349d609999617a90522f74c2ed7eb3b70931a60",
+    "scripts/smoke.py": "a74b1a3b1e05a07f80b09180907aeabecd1cd04b49ec8d28df9219f1d06e039b",
+    "src/currencymorphism/__init__.py": "4a15d00558f2892387c684094b606f346dfde56e0a65fa8cc59581011d0c66b1",
+    "src/currencymorphism/audits_cycles.py": "31dafe266ee8994cc15c478ce6bd2619f7b8d77deafcdb734364a05d5efdafed",
+    "src/currencymorphism/audits_pathkl.py": "19537e4c8982893c1d12462845bafdff85c8428bca4092cb6f21a501bc24a2ab",
+    "src/currencymorphism/generators.py": "de6dc6ebea24e4b57e7ff0f80d0c2910fb33cb020b80efb85b934e3a0d9992dd",
+    "src/currencymorphism/lens.py": "43cbc781475ba8a4c7dd07a8264c8a11579c05ced340817ecb7ffd9dfc2ab352",
+    "src/currencymorphism/markov.py": "32bde266a8aa9e19854596c6e9a6e79e2a2956a29b0d3bb7f1b898b913e2d9b3",
+    "src/currencymorphism/maxcal_single.py": "a328b2d7cfeba36a44854a10812efb9469947e89f785cdac2ea6919e1cc2bf21",
+    "src/currencymorphism/mle_logit.py": "2ed8de915278aa23d922bb91d03ec6a2ac31da1b06a202661bad25c89037335b",
+    "src/currencymorphism/packaging.py": "ed779139b7d1de0f5d41f138c3078bb1863e735b65bf4ace9851146258532c05",
+    "src/currencymorphism/runlog.py": "574fcac4c51fcaf9e38fd8eb224a1021a8250df5c64d5500fe376f84c90b43b1",
+    "tests/test_audits_cycles.py": "bc52be470448aab562951b38c9e171729b803b507208528f8da576a2ef943e2c",
+    "tests/test_audits_pathkl.py": "07c8ffba38832f004c137f1c64a6d96d6eafeec222bb989207c997c4c1adeb16",
+    "tests/test_generators.py": "e100c17186af639e5cf079934183adb623d0ed753cb1ff3011f59e45b61dc767",
+    "tests/test_lens.py": "df3e411077a6d8cd7d541c909c0017366684be4502d38cd3ea2f18014696263b",
+    "tests/test_markov.py": "7c7c89d429fd30b79799721ba001a862a9b076a439adf0f55f6d24d494ddb69a",
+    "tests/test_math_regressions.py": "b7bbc979befa30884ee1b65caeacf480868b0e260c4cfe08bd6c11979b459f1e",
+    "tests/test_maxcal_single.py": "8b0314a364a20fb4185a768f0a3092af59550af320ab5ba14bf09c5817057a88",
+    "tests/test_mle_logit.py": "7629062070b238c878ea34ec508177c7c7519382d21714a782e61ca59cb51b4a",
+    "tests/test_packaging.py": "08579d653790eef4761c6779368d211791596408e2adc960d35e816f0a2a93e6",
+    "tests/test_runlog.py": "cfbcf7a544c4c9af05b70de6851ce252c9df2c92540b0f2e186b5b27d564f76a",
+    "tests/test_smoke.py": "bcb6ce9bc28e02a3db86066a68c5efab98a3e7b04f0e0963d406fb1f03760789"
+  },
+  "reverse_mixture": 0.01,
+  "dpi_min_delta_mean": 0.0037238312341976,
+  "dpi_raw_micro_missing_reverse_mass": 0.002052,
+  "proxy_design_seed": 0,
+  "proxy_permutation_seed": 0,
+  "proxy_no_retries": true,
+  "proxy_good_mean_nll": 2.1026554609698467,
+  "proxy_bad_mean_nll": 2.7727898383876486,
+  "proxy_good_price_std": 3.180538773469688,
+  "proxy_bad_price_std": 0.5544288063311009,
+  "proxy_prediction_advantage": true,
+  "proxy_old_price_stability_claim_supported": false,
+  "ladder_cycle_ranks": [
+    0,
+    5,
+    11
+  ],
+  "fine_affinity_family_rank": 6,
+  "coarsening_counterexample_cycle_ranks": [
+    0,
+    1
+  ],
+  "idempotence_min": 0.0014433001749988,
+  "idempotence_max": 0.115964475615418,
+  "idempotence_all_exit_bounds_hold": true,
+  "idempotence_calibration_min": 0.0416666666666666,
+  "idempotence_controlled_stationary_cost_min": 0.0001448476910771,
+  "idempotence_controlled_stationary_cost_max": 0.0163868936509968,
+  "old_frozen_evidence": {
+    "status": "historical; truncated DPI and selected proxy design",
+    "unchanged": true
+  }
+}
