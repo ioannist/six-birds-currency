@@ -50,3 +50,47 @@ paper/*.run.xml
 paper/*.nav
 paper/*.snm
 paper/*.vrb
+# The compiled paper itself stays tracked
+!paper/main.pdf
+
+# Local planning and agent-ticket material (kept on disk, not published)
+/plan.md
+/paper/outline.md
+/paper/figure_plan.md
+/paper/final_checklist.md
+
+# Editor noise
+*.swp
+*.swo
+.VSCodeCounter/
+
+# Local secrets and credentials (keep only an explicit example file)
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.netrc
+.pypirc
+credentials*.json
+*secret*
+*token*.txt
+
+# Local agent, prompt, transcript and session state (any depth)
+**/.codex/
+**/.claude/
+**/.cursor/
+**/.aider*
+**/.continue/
+**/.specstory/
+**/.windsurf/
+/memory/
+/prompts/
+/skills/
+**/transcripts/
+**/rollout-*.jsonl
+**/*.transcript*
+**/CLAUDE.local.md
+**/.claude.json
+**/.codex_thread_id*
