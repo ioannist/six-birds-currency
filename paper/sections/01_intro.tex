@@ -1,39 +1,83 @@
-\section{Introduction}
+\section{Introduction}\label{sec:intro}
 
-\subsection{The recurrence of currencies across sciences}
+\subsection{Currencies keep reappearing}
 
-Energy in physics, code length in information theory, money in economics, compute in algorithms, and attention or precision in cognition are usually introduced inside separate disciplinary languages. Yet they keep doing the same mathematical work. They budget which states or protocols are feasible, they add along sequences of operations, and they reappear as exchange rates between objectives that cannot be simultaneously optimized. The recurrence is too regular to be dismissed as metaphor. Mature theories seem to grow something price-like whenever they stabilize a descriptive layer \cite{jaynes1957information,shannon1948mathematical,arrowdebreu1954,sims2003rationalinattention}.
+Energy in physics, code length in information theory, money in economics, compute in algorithms, and attention in cognition are introduced in different languages, yet they do the same mathematical work. They limit which states or protocols are feasible. They add up along sequences of operations. And they come back as exchange rates between goals that cannot all be met at once: inverse temperature trades entropy against energy, a market price trades one good against another, a regularization strength trades fit against complexity \cite{jaynes1957information,shannon1948mathematical,arrowdebreu1954,sims2003rationalinattention}. We call such quantities \emph{currencies}.
 
-What is still missing is a layer-relative account of why such quantities recur. It is easy to point to a familiar local example---temperature as the dual of an energy constraint, price as the dual of a budget, regularization strength as the dual of a complexity penalty. It is harder to explain why one layer's ledger becomes the next layer's feasibility law, and why the next layer then speaks back in the language of prices.
+Standard duality theory explains part of this \cite{boyd2004convex}. Once an optimization problem is written down, with its variables and its constraints, Lagrange multipliers are exactly what one should expect. But that explanation starts late. It takes the descriptive layer and its constraints as given. It does not say where a constraint at one level of description comes from, or why it so often looks like a limit on something spent at a lower level.
 
-\subsection{What standard duality explains, and what it misses}
+This paper supplies that missing step, and is careful about what the step requires. The idea is simple. A higher-level object, such as a macrostate, a packaged pattern, or a stable representation, persists only if something at the lower level keeps maintaining it. When that maintenance draws on a limited resource, the resource bound becomes a feasibility constraint at the higher level. If the higher layer then settles into its least-committed (maximum-entropy) description subject to that constraint, a multiplier appears, and the multiplier is the higher layer's own currency: the exchange rate between what it would like to do and what the lower layer can afford. Figure~\ref{fig:overview} shows the chain.
 
-Standard duality theory explains a great deal once the optimization problem is already on the page \cite{boyd2004convex}. If an agent maximizes utility under a budget, or if an ensemble maximizes entropy under a mean-energy constraint, then shadow prices or multipliers are exactly what one should expect. But that familiar result begins too late for the present question. It presupposes the layer, its state space, and its constraints. It does not explain how a constraint becomes natural at one level because something had to be spent at another.
+The qualifier matters. Persistence by itself does not imply a budget: a system that stays in one state forever persists perfectly and spends nothing. The principle therefore takes the resource law as a premise and proves what follows from it. Within that scope the conclusions are theorems, not analogies.
 
-This paper addresses that missing step. Its central claim is cross-layer: a lower-layer currency becomes a higher-layer constraint because packaged higher-level objects can persist only under bounded lower-layer spending. Once the higher layer is organized by those budgets, its own currency appears as the corresponding shadow price. The point is not merely that multipliers exist. The point is that stable closures inherit prices from the budgets of the substrate that maintains them.
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  box/.style={draw=black!55, rounded corners=3pt, fill=white, align=center, inner sep=3pt, text width=2.65cm, minimum height=1.55cm},
+  arr/.style={-{Stealth[length=2.2mm]}, thick, black!70},
+  lab/.style={font=\footnotesize, align=center, text=black!75},
+  layer/.style={fill=black!5, rounded corners=4pt, inner xsep=6pt, inner ysep=9pt}
+]
+\node[box] (audit) {\textbf{Audit}\\ path asymmetry,\\ cycle affinities};
+\node[box, right=1.3cm of audit] (ledger) {\textbf{Ledger}\\ cost \(L(h)\) of a\\ maintenance\\ protocol \(h\)};
+\node[box, right=1.4cm of ledger] (budget) {\textbf{Budget}\\ \(Y\) is feasible iff\\ some \(h\in H_Y\)\\ has \(L(h)\le B\)};
+\node[box, right=1.3cm of budget] (price) {\textbf{Shadow price}\\ Gibbs law \(q^{\lambda}\),\\ multiplier \(\lambda\ge 0\)};
+\draw[arr] (audit) -- node[lab, above]{candidate\\ cost} node[lab, below]{Thm.~\ref{thm:dpi}} (ledger);
+\draw[arr] (ledger) -- node[lab, above]{resource\\ law} node[lab, below]{Asm.~\ref{ass:ledger}} (budget);
+\draw[arr] (budget) -- node[lab, above]{max-\\ entropy} node[lab, below]{Thm.~\ref{thm:duality}} (price);
+\begin{scope}[on background layer]
+\node[layer, fit=(audit)(ledger), label={[lab]below:layer \(\ell\) (substrate)}] {};
+\node[layer, fit=(budget)(price), label={[lab]below:layer \(\ell+1\) (packaged objects)}] {};
+\end{scope}
+\draw[arr, dashed] (price.north) -- ++(0,0.6) -| node[lab, pos=0.25, above]{the price can serve as a ledger for the next layer up} (ledger.north);
+\end{tikzpicture}
+\caption{The currency--constraint chain. A ledger at layer \(\ell\) records what maintenance costs. Audits measure irreversible drive; the path-reversal KL audit measures directional asymmetry that coarse observation cannot inflate (Theorem~\ref{thm:dpi}). Using an audit quantity as a maintenance ledger is a modelling choice, not a consequence of the theorem. A resource law, supplied as a premise, turns the ledger into a feasibility constraint on objects of layer \(\ell+1\). When layer \(\ell+1\) closes by maximum entropy under that constraint, the Gibbs multiplier is a shadow price, which is a currency of the new layer.}
+\label{fig:overview}
+\end{figure}
 
-\subsection{Six Birds in one paragraph}
+\subsection{The Six Birds setting}
 
-Six Birds Theory provides the closure language in which to state that claim. The framework organizes emergent description around six primitives: \textbf{P1} operator rewrite, \textbf{P2} constraints or gating, \textbf{P3} protocol holonomy or route mismatch, \textbf{P4} staging or sectors, \textbf{P5} packaging, and \textbf{P6} accounting or audit \cite{tsiokos2026sixbirds}. The present paper is primarily about the chain \textbf{P5}--\textbf{P6}--\textbf{P2}: packaging creates higher-level objects, accounting measures what must be spent to keep them coherent, and constraints turn that spending into a feasibility boundary for the next descriptive layer.
+Six Birds is a closure calculus for emergent description \cite{tsiokos2026sixbirds}. It is built from six primitives: \textbf{P1} operator rewrite, \textbf{P2} constraints or gating, \textbf{P3} protocol holonomy (route dependence), \textbf{P4} staging or sectors, \textbf{P5} packaging, and \textbf{P6} accounting or audit. This paper is about the chain \textbf{P5}\(\to\)\textbf{P6}\(\to\)\textbf{P2}: packaging creates higher-level objects, accounting measures what it costs to keep them coherent, and constraints turn that cost into the boundary of what the next layer can do.
 
-That perspective immediately separates genuine currencies from convenient statistics. A quantity earns the name only when it structurally governs closure: when it gates feasibility, adds along protocols, generates a monotone potential, or reappears as a shadow price. Not every salient coordinate or route-dependent effect qualifies. In particular, protocol mismatch by itself is not yet a directionality currency unless it is backed by an honest audit that survives coarse observation.
+The framework also tells us what does \emph{not} count. A quantity is a currency only if it does structural work: it gates feasibility, adds along protocols, drives a monotone potential, or prices a constraint. A statistic that merely correlates with behaviour is not enough, and neither is bare route dependence. Protocol mismatch becomes a directionality currency only when an honest audit backs it up, and an audit is honest only if coarse observation cannot manufacture it.
 
-\subsection{Thesis and contributions}
+\subsection{Contributions}
 
-Our thesis is that currencies are structural, not metaphorical. A currency is what a layer spends to stay closed. A shadow price is the name the next layer gives to the previous layer's budget. The next layer experiences that spending as a feasibility boundary, and organizes its own choices around the marginal value of relaxing it.
-
-The paper makes four contributions.
 \begin{enumerate}[leftmargin=*]
-    \item It gives a strict, layer-relative definition of currency that distinguishes constraint currencies, ledger currencies, potential currencies, and dual currencies.
-    \item It formulates a currency--constraint principle: lower-layer currencies become higher-layer feasibility constraints, and higher-layer currencies emerge as the shadow prices of those constraints.
-    \item It implements that principle in a finite-state stochastic laboratory with frozen, reproducible evidence: honest audits under coarse-graining, monotone price emergence with a slack regime, growth of currency dimension with resolution, failure of proxy currencies, and improved packaging coherence under stronger budget enforcement.
-    \item It provides a formal anchor for the audit side of the story via a Lean theorem proving deterministic-pushforward monotonicity for a finite KL form.
+    \item \textbf{A layer-relative definition of currency} (Section~\ref{sec:framework}) with four roles (constraint, ledger, potential, dual price) and the nontriviality conditions that separate them from arbitrary statistics.
+    \item \textbf{A conditional currency--constraint principle} (Section~\ref{sec:duality}). Given a maintenance ledger and a resource law, the ledger induces a higher-layer feasibility constraint. In a finite entropy closure the Gibbs law is optimal and its multiplier is a supporting shadow price (Theorem~\ref{thm:duality}). We describe the full price curve, including infeasible, infinite-price, active, and slack regimes (Proposition~\ref{prop:regimes}).
+    \item \textbf{Honest audits} (Section~\ref{sec:audits}). Path-reversal relative entropy cannot increase under any deterministic pointwise observation. A simple regularization keeps empirical audits finite while preserving that inequality on the same sample. Cycle affinities give low-dimensional drive coordinates.
+    \item \textbf{A finite Markov laboratory} (Section~\ref{sec:lab}) that illustrates each piece and separates what is forced by theorem from what depends on the chosen example. This includes a uniform bound showing that stronger maintenance pricing makes packaged objects nearly idempotent (Theorem~\ref{thm:packaging}).
+    \item \textbf{A Lean~4 formalization} (Appendix~\ref{app:lean}) of finite supported KL data processing, its path-reversal specialization, and single-row Gibbs duality, using only the standard axioms.
 \end{enumerate}
 
-The empirical aim is modest but important. We do not claim to have formalized every layer transition or every scientific use of a currency. We claim instead that there is a common mathematical pattern strong enough to define, measure, stress-test, and partially formalize.
+Table~\ref{tab:status} lists every main claim and the kind of support behind it. The distinction matters because the laboratory is synthetic. Where a pattern is guaranteed by a theorem, the numerics serve as a consistency check; where it is not, we say so.
+
+\begin{table}[tbp]
+\centering
+\small
+\renewcommand{\arraystretch}{1.12}
+\caption{What each main claim rests on. ``Lean'' means machine-checked; ``proof'' means a complete proof in this paper; ``example'' means it holds in the stated finite construction and is not claimed in general.}
+\label{tab:status}
+\begin{tabularx}{\linewidth}{L{0.40\linewidth}L{0.17\linewidth}Y}
+\toprule
+Claim & Support & Where \\
+\midrule
+Deterministic observation cannot increase finite supported KL, or path-reversal KL & Lean & Thm.~\ref{thm:dpi}, App.~\ref{app:lean} \\
+The reversal-mixture audit obeys the same inequality on a single sample & proof & Prop.~\ref{prop:mixture} \\
+Gibbs optimality and the shadow-price inequality (one row) & Lean & Thm.~\ref{thm:duality}, App.~\ref{app:lean} \\
+Weighted rows; price regimes; \(d\lambda^\star/db<0\) & proof & Prop.~\ref{prop:regimes}, App.~\ref{app:proofs} \\
+Persistence alone does not imply a budget & counterexample & Example~\ref{ex:identity} \\
+Packaging defect \(\le \min(2,2\tau\varepsilon)\); vanishes as the exit price grows & proof & Thm.~\ref{thm:packaging} \\
+Cycle ranks \(0,5,11\) and drive rank \(0,0,6\) on the ladder & proof\,+\,example & Prop.~\ref{prop:ladder}, Sec.~\ref{sec:lab-ladder} \\
+Coarsening can create cycle rank & counterexample & Sec.~\ref{sec:lab-ladder} \\
+A fixed kernel other than the truth has positive expected excess held-out loss & proof & Sec.~\ref{sec:lab-proxy} \\
+The fitted ledger model beats a scale-matched proxy on held-out data & example & Sec.~\ref{sec:lab-proxy} \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Place in the Six Birds series}
 
-Within the Six Birds series, \emph{Six Birds: Foundations of Emergence Calculus} introduced the primitive vocabulary of closure and the layer package built from lenses, packaging, and audits \cite{tsiokos2026sixbirds}. \emph{To Create a Stone with Six Birds} then turned those primitives into an interaction algebra and a finite stochastic laboratory in which geometric and thermodynamic regimes can be observed side by side \cite{tsiokos2026create}. The present paper adds the economics of closure. It asks what a closure must spend to maintain its packaged objects, and shows that such spending is not merely local bookkeeping: lower-layer audits reappear as higher-layer constraints, while higher-layer currencies emerge as the shadow prices of those same budgets.
-
-The rest of the paper makes that claim precise, operational, and testable. We first define currencies within the Six Birds framework, then state the currency--constraint principle, then realize it in finite Markov systems and evaluate its empirical signatures using a frozen evidence pack.
+\emph{Six Birds: Foundations of Emergence Calculus} introduced the primitives and the layer package of lenses, packaging, and audits \cite{tsiokos2026sixbirds}. \emph{To Create a Stone with Six Birds} turned them into an interaction algebra (PICA) and a finite stochastic laboratory \cite{tsiokos2026create}. The present paper adds the economics of closure: what a closure must spend to keep its objects, how that spending becomes the next layer's constraint, and when the next layer answers with a price.

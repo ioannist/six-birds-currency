@@ -1,0 +1,75 @@
+\section{Proofs}\label{app:proofs}
+
+Throughout, \(0\log0=0\), and \(\KL(p\|q)=\sum_xp(x)\log(p(x)/q(x))\) whenever \(\supp p\subseteq\supp q\) (and \(+\infty\) otherwise).
+
+\subsection{Theorem~\ref{thm:duality} (finite Gibbs duality)}
+
+\emph{(i)} Since \(\log q^\lambda_{ij}=-\lambda u_{ij}-\log Z_i(\lambda)\) and \(q^\lambda\) is strictly positive, for each row
+\[
+\KL(p_{i\cdot}\|q^\lambda_{i\cdot})=\sum_jp_{ij}\log p_{ij}+\lambda\sum_jp_{ij}u_{ij}+\log Z_i(\lambda),
+\]
+using \(\sum_jp_{ij}=1\). Multiplying by \(\mu_i\) and summing gives (i).
+
+\emph{(ii)} Setting \(p=q^\lambda\) in (i) gives \(0=-\Hmu(q^\lambda)+\lambda\Cmu(q^\lambda)+\sum_i\mu_i\log Z_i\). Subtracting this from (i) for a general \(p\), and using that the left side of (i) is nonnegative, gives (ii).
+
+\emph{(iii)} If \(\Cmu(p)\le b\) and \(\lambda\ge0\), then by (ii) and complementary slackness,
+\[
+\Hmu(p)\le\Hmu(q^\lambda)+\lambda\big(\Cmu(p)-\Cmu(q^\lambda)\big)\le\Hmu(q^\lambda)+\lambda\big(b-\Cmu(q^\lambda)\big)=\Hmu(q^\lambda).
+\]
+Since \(q^\lambda\) is feasible, it is optimal.
+
+\emph{(iv)} The same chain with \(\Cmu(p)\le b'\) gives \(\Hmu(p)\le\Hmu(q^\lambda)+\lambda(b'-b)\). By (iii), \(V(b)=\Hmu(q^\lambda)\), so taking the supremum over \(p\) gives \(V(b')\le V(b)+\lambda(b'-b)\). The function \(V\) is concave, because the objective is concave and the constraint is linear in \((p,b)\). A concave function differentiable at \(b\) has its derivative as its only supergradient.
+
+\emph{Uniqueness.} \(\Hmu\) is strictly concave in the rows with \(\mu_i>0\), and the feasible set is convex. If two optimizers differed on such a row, their midpoint would be feasible with strictly larger entropy. \qed
+
+\subsection{Proposition~\ref{prop:regimes} (price regimes)}
+
+Write \(C(\lambda)=\Cmu(q^\lambda)=\sum_i\mu_i\E_{q^\lambda_{i\cdot}}[u_{i\cdot}]\). Differentiating the Gibbs mean gives \(\tfrac{d}{d\lambda}\E_{q^\lambda_{i\cdot}}[u_{i\cdot}]=-\Var_{q^\lambda_{i\cdot}}(u_{i\cdot})\). Because \(q^\lambda\) has full support, this variance is positive on every nonconstant row. As \(\lambda\to\infty\), \(q^\lambda_{i\cdot}\) converges to the uniform law on \(\argmin_ju_{ij}\), so \(C(\lambda)\to\cmin\); and \(C(0)=c_0\).
+
+(a) Every \(p\) has \(\Cmu(p)\ge\cmin\). (b) At \(b=\cmin\) every feasible \(p\) puts all the mass of each positive-weight row on that row's minimizers, and entropy is maximized by the uniform law on them; zero-weight rows are unconstrained. The limit of \(q^\lambda\) is one such optimizer. It is not attained at finite \(\lambda\), because \(q^\lambda\) charges every destination and some positive-weight row has non-minimizers. (c) By continuity and strict monotonicity, \(C(\lambda)=b\) has a unique solution \(\lambda^\star(b)\in(0,\infty)\), and \(q^{\lambda^\star}\) is optimal by Theorem~\ref{thm:duality}(iii). From (i) with \(p=q^\lambda\), \(\Hmu(q^\lambda)=\lambda C(\lambda)+\sum_i\mu_i\log Z_i(\lambda)\). Differentiating, and using \(\tfrac{d}{d\lambda}\log Z_i=-\E_{q^\lambda_{i\cdot}}[u_{i\cdot}]\), gives \(\tfrac{d}{d\lambda}\Hmu(q^\lambda)=\lambda C'(\lambda)\). Hence \(V'(b)=\lambda^\star(b)\), and by the inverse function theorem \(d\lambda^\star/db=1/C'(\lambda^\star)\). (d,e) For \(b\ge c_0\), \(\lambda=0\) satisfies feasibility and complementary slackness, so the uniform rows are optimal; the constraint is active at \(b=c_0\) and strictly slack for \(b>c_0\). Finally, if every positive-weight row is constant, \(C(\lambda)\) is constant, \(c_0=\cmin\), and no budget determines \(\lambda\). \qed
+
+\subsection{Theorem~\ref{thm:dpi} (data processing)}
+
+Group the atoms of \(\alpha\) into the fibres \(F^{-1}(y)\). On a fibre with \(Q_y=\sum_{x\in F^{-1}(y)}q(x)>0\), convexity of \(\varphi(t)=t\log t+1-t\) (Jensen's inequality with weights \(q(x)/Q_y\)) gives
+\[
+Q_y\,\varphi\!\Big(\frac{P_y}{Q_y}\Big)\le\sum_{x\in F^{-1}(y)}q(x)\,\varphi\!\Big(\frac{p(x)}{q(x)}\Big),
+\]
+where \(P_y=\sum_{x\in F^{-1}(y)}p(x)\). Atoms with \(q(x)=0\) have \(p(x)=0\) by the support hypothesis and contribute nothing. Fibres with \(Q_y=0\) contribute zero on the left. Summing over \(y\), and using that \(\sum_xq(x)\varphi(p(x)/q(x))=\KL(p\|q)\) under the support hypothesis, gives the first claim. For paths, pointwise observation commutes with reversal, \(f\circ\mathcal R=\mathcal R\circ f\), so \(f_*\mathcal R_*p=\mathcal R_*f_*p\), and the first claim applies with \(q=\mathcal R_*p\). This is the argument mechanized in Lean (Appendix~\ref{app:lean}). \qed
+
+\subsection{Proposition~\ref{prop:mixture} (reversal-mixture audit)}
+
+\(\mathcal R\) is an involution. Since \(\varepsilon\) and \(1-\varepsilon\) are positive, \(\mathcal R_*p_\varepsilon=(1-\varepsilon)\mathcal R_*p+\varepsilon p\) has support \(\supp p\cup\supp\mathcal R_*p\), which contains \(\supp p_\varepsilon\). Hence \(\Sigma_{T,\varepsilon}(p)<\infty\).
+
+By joint convexity of KL,
+\[
+\Sigma_{T,\varepsilon}(p)\le(1-\varepsilon)\KL(p\|\mathcal R_*p)+\varepsilon\KL(\mathcal R_*p\|p)=\KL(p\|\mathcal R_*p),
+\]
+because applying the bijection \(\mathcal R\) to both arguments does not change KL.
+
+Finally, let \(F\) apply \(f\) to every state of a window. Then \(F\circ\mathcal R=\mathcal R\circ F\), so
+\[
+F_*(p_\varepsilon)=(1-\varepsilon)F_*p+\varepsilon\mathcal R_*F_*p=(F_*p)_\varepsilon
+\quad\text{and}\quad
+F_*(\mathcal R_*p_\varepsilon)=\mathcal R_*(F_*p)_\varepsilon .
+\]
+Theorem~\ref{thm:dpi}, applied to \(p_\varepsilon\) and \(\mathcal R_*p_\varepsilon\), gives \(\Sigma_{T,\varepsilon}(F_*p)\le\Sigma_{T,\varepsilon}(p)\). When \(p\) is an empirical window law, the observed-window law is exactly \(F_*p\), so the inequality holds for the same sample. \qed
+
+\subsection{Theorem~\ref{thm:packaging} (packaging defect)}
+
+Fix a block \(a\) and its prototype \(\nu_a=\pi(\cdot\mid a)\). Write \(\Phi_a=\sum_{i\in a,\,j\notin a}\pi(i)P_{ij}\) for the stationary flow out of \(a\). For \(j\in a\), stationarity gives \((\nu_aP)(j)-\nu_a(j)=-\pi(a)^{-1}\sum_{i\notin a}\pi(i)P_{ij}\le0\). For \(j\notin a\), \((\nu_aP)(j)=\pi(a)^{-1}\sum_{i\in a}\pi(i)P_{ij}\). The total flow into \(a\) equals \(\Phi_a\) by stationarity, so
+\[
+\|\nu_aP-\nu_a\|_1=\frac{2\Phi_a}{\pi(a)}=2\sum_{i\in a}\nu_a(i)\sum_{j\notin a}P_{ij}\le2\varepsilon .
+\]
+Since \(P\) contracts \(\ell_1\) distances between probability laws, telescoping gives \(\|\nu_aP^\tau-\nu_a\|_1\le2\tau\varepsilon\). Because \(\mathcal B\nu_a=\nu_a\) and \(\mathcal B\) also contracts \(\ell_1\),
+\[
+\|E_\tau(\nu_a)-\nu_a\|_1=\|\mathcal B(\nu_aP^\tau)-\mathcal B(\nu_a)\|_1\le2\tau\varepsilon .
+\]
+For any probability \(\mu\), \(E_\tau(\mu)=\sum_aw_a\nu_a\) is a lifted law, and \(E_\tau\) is linear. Hence
+\[
+\delta(\mu)=\Big\|\sum_aw_a\big(E_\tau(\nu_a)-\nu_a\big)\Big\|_1\le2\tau\varepsilon ,
+\]
+and \(\delta\le2\) holds trivially. The same linearity shows that, over lifted inputs \(\mu=\sum_aw_a\nu_a\), \(\delta(\mu)\le\sum_aw_a\,\delta(\nu_a)\le\max_a\delta(\nu_a)\), with equality at a prototype. The exit formula in Section~\ref{sec:lab-packaging} follows from renormalizing the row \((r_i,\,s_ie^{-\lambda})\). \qed
+
+\subsection{Proposition~\ref{prop:ladder} (ladder cycle ranks)}
+
+The ladder chain is irreducible, so its stationary law is positive. Hence \(Q_{ab}>0\) exactly when some edge of \(P\) runs from block \(a\) to block \(b\); the support graphs are simple and we omit self-loops. \emph{Rings}: the \(M\) ring-blocks are joined only through bridges between neighbouring rings, giving a path with \(M\) vertices and \(M-1\) edges, so \(\betaone=0\). \emph{Half-rings}: each ring contributes two blocks joined by one edge (ring edges cross between the halves). The bridge at position \(0\) joins the first halves of neighbouring rings, and the bridge at \(L/2\) joins their second halves. This gives \(2M\) vertices and \(M+2(M-1)=3M-2\) edges in one component, so \(\betaone=M-1\). \emph{States}: \(ML\) vertices, \(ML\) ring edges (each ring is a simple cycle since \(L\ge4\)), and \(2(M-1)\) bridges, so \(\betaone=2M-1\). \qed

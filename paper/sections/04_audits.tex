@@ -1,0 +1,57 @@
+\section{Audits that observation cannot inflate}\label{sec:audits}
+
+Audits measure irreversible drive, and they are natural candidates for the costs that enter a ledger. Whether a given audit quantity really is the maintenance spending of a layer is a modelling question that no inequality settles. What can be proved is that the audit is honest with respect to observation. This section fixes the two audits used in the laboratory, path-reversal asymmetry and cycle affinities, and proves that coarse observation can hide the first but never create it.
+
+\subsection{Path-reversal asymmetry}
+
+Let \(P\) be a row-stochastic kernel on a finite set \(Z\) \cite{kemeny1960finite}, let \(\rho_0\) be an initial law, and let \(\mathbb P_{\rho_0,T}\) be the law of the path \(x_{0:T}=(x_0,\dots,x_T)\). Let \(\mathcal R\) reverse the order of a path. The directionality audit is
+\[
+\SigmaT=\KL\big(\mathbb P_{\rho_0,T}\,\|\,\mathcal R_*\mathbb P_{\rho_0,T}\big)\in[0,\infty],
+\]
+the standard forward-versus-reversed relative entropy of stochastic thermodynamics \cite{kullback1951information,lebowitz1999gallavotti,seifert2005entropy}. When every path of positive probability has a reversal of positive probability,
+\[
+\SigmaT=\E\big[\log\rho_0(X_0)-\log\rho_0(X_T)\big]+\sum_{t=0}^{T-1}\E\left[\log\frac{P(X_t,X_{t+1})}{P(X_{t+1},X_t)}\right].
+\]
+The first term is a boundary term and cannot be dropped for a nonstationary initial law. A reversible kernel gives \(\SigmaT=0\) when it is started from its stationary law, but in general not from an arbitrary \(\rho_0\). If some path of positive probability has a reversal of probability zero, for example because it uses a one-way edge, then \(\SigmaT=\infty\).
+
+\begin{theorem}[Data processing for path audits]\label{thm:dpi}
+Let \(\alpha,\beta\) be finite sets, \(F:\alpha\to\beta\) any map, and \(p,q\) probability laws on \(\alpha\) with \(\supp p\subseteq\supp q\). Then
+\[
+\KL(F_*p\,\|\,F_*q)\le\KL(p\,\|\,q).
+\]
+In particular, if \(p\) is a law on paths of length \(n\) with \(\supp p\subseteq\supp\mathcal R_*p\), and \(f\) is applied pointwise to every state of the path, then
+\[
+\KL\big(f_*p\,\|\,\mathcal R_*f_*p\big)\le\KL\big(p\,\|\,\mathcal R_*p\big).
+\]
+\end{theorem}
+
+The theorem is the classical data-processing inequality \cite{coverthomas2006}. The path form uses only the fact that pointwise observation commutes with reversal. Neither surjectivity nor a full-support reference law is needed, and the reference may vanish wherever the first law does. Both statements are proved in Lean (Appendix~\ref{app:lean}). Without the support hypothesis the right-hand side is \(+\infty\), so the inequality holds trivially in the extended reals; that extended form is standard but is not part of the mechanization.
+
+\subsection{Empirical audits and a regularization that keeps the inequality}
+
+From data, we estimate \(\SigmaT\) on sliding windows of length \(T+1\). Let \(\hat p\) be the empirical law of the observed windows. If some observed window was never seen reversed, then \(\KL(\hat p\,\|\,\mathcal R_*\hat p)=\infty\). This is the honest answer. Discarding such windows and summing the rest does not give a KL divergence, and it need not obey data processing. With ten windows, nine of type \((0,1)\) and one of type \((2,3)\), the truncated micro sum is zero, but observing the states through the labels \((0,1,1,0)\) yields a finite observed audit \(0.8\log 9>0\).
+
+To compare finite numbers we regularize by mixing in the reversal.
+
+\begin{proposition}[Reversal-mixture audit]\label{prop:mixture}
+For \(0<\varepsilon<\tfrac12\) and any law \(p\) on windows, let \(p_\varepsilon=(1-\varepsilon)p+\varepsilon\,\mathcal R_*p\) and
+\[
+\Sigma_{T,\varepsilon}(p)=\KL\big(p_\varepsilon\,\|\,\mathcal R_*p_\varepsilon\big).
+\]
+Then \(\Sigma_{T,\varepsilon}(p)\) is finite, \(\Sigma_{T,\varepsilon}(p)\le\KL(p\,\|\,\mathcal R_*p)\), and for every pointwise observation \(f\),
+\[
+\Sigma_{T,\varepsilon}(f_*p)\le\Sigma_{T,\varepsilon}(p).
+\]
+\end{proposition}
+
+Observation commutes with the mixture, so the inequality holds for the \emph{same} sample and needs no statistical argument (Appendix~\ref{app:proofs}). The regularized audit is a lower bound on the raw audit. It is not an unbiased estimator of the population \(\SigmaT\), and we do not use it as one. We report the raw missing-reverse mass, the probability under \(\hat p\) of windows whose reversal was never observed, next to it.
+
+\subsection{Cycle affinities}\label{sec:cycles}
+
+The second audit lives on loops. On each edge whose two directions both have positive probability, define the antisymmetric form \(a_{ij}=\log(P_{ij}/P_{ji})\). For an oriented cycle \(\gamma\) in the undirected support graph of these bidirectional edges, the affinity is
+\[
+\mathcal A(\gamma)=\sum_{(i\to j)\in\gamma}a_{ij}
+\]
+\cite{schnakenberg1976network,esposito2010threefaces}. For a simple graph without self-loops, the cycle space has dimension \(\betaone=m-n+c\) (edges minus vertices plus components). The map from edge forms to cycle integrals has rank \(\betaone\), and all cycle integrals vanish exactly when \(a\) is the gradient of a vertex potential on each component. For bidirectional kernels this is Kolmogorov's criterion for reversibility. One-way edges are excluded from this audit and are left to the path audit, which registers them as infinite asymmetry whenever a path of positive probability within the audited horizon traverses one. The affinities of a cycle basis are low-dimensional drive coordinates. Their Euclidean norm depends on the chosen basis, so we use norms only to compare drive within one fixed basis.
+
+Two dimensions should not be confused. The cycle rank \(\betaone\) counts the loop directions \emph{available} at a resolution. The rank of the map from a model's drive parameters to cycle affinities counts the directions \emph{actually driven}. Section~\ref{sec:lab-ladder} shows that the two can differ.

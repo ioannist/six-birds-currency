@@ -1,0 +1,122 @@
+{
+  "title": "To Spend a Stone with Six Birds: Currency-Constraint Duality and Shadow Prices Across Closure Layers",
+  "description": "<p>Physics has temperatures, economics has prices, statistics has regularization strengths, and models of attention have precision weights. Each is a single number that prices a limited resource. This paper asks why such numbers appear whenever a stable descriptive layer forms, and answers within the Six Birds closure calculus. We define a currency relative to a layer by the job it does: bounding what is feasible, adding up along protocols, driving a monotone potential, or pricing a constraint.</p>\n<p>We then state the <em>currency&ndash;constraint principle</em> as a conditional result. If maintaining a higher-level object requires keeping a lower-level ledger within a budget, that ledger becomes a feasibility constraint for the higher layer; if the higher layer then closes by maximizing entropy under the budget, the Gibbs multiplier of the constraint is a nonnegative shadow price. We prove this finite duality, including exactly when the price is positive, zero, or infinite. We also formalize in Lean 4 the single-row duality and the data-processing inequality that prevents coarse observation from creating path-reversal asymmetry.</p>\n<p>A finite Markov laboratory illustrates each step. Coarse observation never inflates a regularized path audit. The fitted price follows the predicted curve and vanishes once the budget is slack. A resolution ladder exposes more cycle directions (0, 5, 11) than are actually driven (0, 0, 6). A ledger-derived cost predicts held-out transitions better than a scale-matched proxy. Stronger maintenance pricing shrinks packaging defects under an explicit bound. Persistence alone does not create a budget; the principle applies once a resource law is given, and prices then follow whenever the layer closes by maximum entropy under a feasible budget.</p>\n<p>Code, experiments, and the Lean development: <a href=\"https://github.com/ioannist/six-birds-currency\">https://github.com/ioannist/six-birds-currency</a></p>",
+  "publication_date": "2026-10-01",
+  "version": "v2.0",
+  "keywords": [
+    "currencies",
+    "shadow prices",
+    "constraints",
+    "closure layers",
+    "duality",
+    "maximum entropy",
+    "Gibbs duality",
+    "data-processing inequality",
+    "path-reversal asymmetry",
+    "cycle affinity",
+    "KL divergence",
+    "Markov chains",
+    "Lean 4",
+    "emergence calculus",
+    "Six Birds Theory"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.18365949",
+      "relation": "cites",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.18838994",
+      "relation": "cites",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.2307/1907353",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.2307/3215235",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1007/978-3-319-21401-6_26",
+      "relation": "cites",
+      "resource_type": "publication-conferencepaper",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1103/PhysRevE.82.011143",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1103/PhysRev.106.620",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1006/jeth.1997.2357",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1214/aoms/1177729694",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1023/A:1004589714161",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1145/3372885.3373824",
+      "relation": "cites",
+      "resource_type": "publication-conferencepaper",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1103/RevModPhys.85.1115",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1103/RevModPhys.48.571",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1103/PhysRevLett.95.040602",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1002/j.1538-7305.1948.tb01338.x",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.1016/S0304-3932(03)00029-1",
+      "relation": "cites",
+      "resource_type": "publication-article",
+      "scheme": "doi"
+    }
+  ],
+  "notes": "Version 2 (October 1, 2026). The currency-constraint principle is stated as a conditional theorem with the resource law as an explicit premise. Finite Gibbs duality is proved with all price regimes, and its single-row form is mechanized in Lean. Data processing is extended to arbitrary deterministic maps and sparse supports, with a path-reversal form; empirical path audits treat unmatched reversals as infinite and use a reversal-mixture regularization. The proxy experiment uses a fixed design, and the v1 price-stability comparison is not supported under that design and is no longer claimed. The ladder result separates available from driven cycle dimension, and a uniform packaging-defect bound was added. Figures and exposition were rewritten."
+}

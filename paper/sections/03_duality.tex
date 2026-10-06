@@ -1,0 +1,84 @@
+\section{From maintenance ledgers to shadow prices}\label{sec:duality}
+
+\subsection{The bridge from persistence to a budget}\label{sec:bridge}
+
+Let layer \(\ell\) have states \(y_\ell\in Y_\ell\), and let a packaging map \(\Pi:Y_\ell\to Y_{\ell+1}\) define the objects of layer \(\ell+1\). One might hope that the mere persistence of a packaged object forces a bound on lower-level spending. It does not.
+
+\begin{example}[Persistence without spending]\label{ex:identity}
+Take a single state, the identity kernel, and the identity packaging map. The packaged object persists forever and is a fixed point of every packaging rule, yet any ledger that is identically zero is consistent with it. Equally, the same dynamics is consistent with an externally imposed ledger that is unbounded. Persistence alone fixes no resource bound.
+\end{example}
+
+A budget must therefore be supplied. We state the premise explicitly.
+
+\begin{assumption}[Maintenance ledger and resource law]\label{ass:ledger}
+Layer \(\ell\) comes with a set of maintenance protocols \(h\), a nonnegative ledger \(L(h)\), and a resource bound \(B\): a protocol is admissible if and only if \(L(h)\le B\). Each object \(Y\) of layer \(\ell+1\) has a set \(H_Y\) of protocols that would maintain it.
+\end{assumption}
+
+Under this assumption, an object is maintainable exactly when some admissible protocol maintains it:
+\[
+Y\in K\quad\Longleftrightarrow\quad \exists\, h\in H_Y \text{ with } L(h)\le B .
+\]
+The lower-layer ledger has become a feasibility constraint (role C1) at layer \(\ell+1\). If the infimum \(u(Y)=\inf_{h\in H_Y}L(h)\) is attained, this is the familiar form \(K=\{Y:\ u(Y)\le B\}\). Over a fixed horizon \(t>0\) the same statement holds for average cost, \(L(h)/t\le B/t\). Two cautions apply. Feasibility is inherited through an existential witness: it says that some maintenance protocol exists, not that every transition written at the higher layer is realizable at the lower one. And the assumption, not persistence, supplies \(B\) and \(H_Y\).
+
+\subsection{Finite maximum-entropy closure}
+
+Suppose now that layer \(\ell+1\) chooses a stochastic description by maximizing entropy subject to a budget on expected cost. This is the maximum-caliber principle for transitions \cite{jaynes1957information,presse2013maxent}, and it is the simplest closure in which a price can appear.
+
+Fix finite nonempty sets of rows \(I\) and destinations \(J\), a real cost array \(u_{ij}\), and fixed row weights \(\mu_i\ge0\) with \(\sum_i\mu_i=1\). For a row-stochastic array \(q\) (each \(q_{i\cdot}\) a probability vector), define
+\[
+\Hmu(q)=-\sum_{i,j}\mu_i\,q_{ij}\log q_{ij},\qquad
+\Cmu(q)=\sum_{i,j}\mu_i\,q_{ij}\,u_{ij}.
+\]
+The weights \(\mu\) are fixed in advance. Letting them depend on \(q\), for instance through the stationary law of \(q\), would define a different problem. For \(\lambda\in\R\) the Gibbs array is
+\[
+q^{\lambda}_{ij}=\frac{e^{-\lambda u_{ij}}}{Z_i(\lambda)},\qquad Z_i(\lambda)=\sum_{j}e^{-\lambda u_{ij}} .
+\]
+
+\begin{theorem}[Finite Gibbs duality]\label{thm:duality}
+Let \(\lambda\ge0\) and \(b\in\R\).
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item For every row-stochastic \(p\),
+\[
+\sum_i\mu_i\,\KL\big(p_{i\cdot}\,\|\,q^{\lambda}_{i\cdot}\big)=-\Hmu(p)+\lambda\,\Cmu(p)+\sum_i\mu_i\log Z_i(\lambda).
+\]
+\item Consequently \(\Hmu(p)-\lambda\Cmu(p)\le\Hmu(q^\lambda)-\lambda\Cmu(q^\lambda)\) for every \(p\).
+\item If \(\Cmu(q^\lambda)\le b\) and \(\lambda\big(\Cmu(q^\lambda)-b\big)=0\), then \(q^\lambda\) maximizes \(\Hmu\) over \(\{p:\Cmu(p)\le b\}\).
+\item Under the conditions of (iii), every \(p\) with \(\Cmu(p)\le b'\) satisfies \(\Hmu(p)\le\Hmu(q^\lambda)+\lambda(b'-b)\). Hence \(\lambda\) is a supergradient of the concave value function \(V(b)=\sup\{\Hmu(p):\Cmu(p)\le b\}\) at \(b\), and \(V'(b)=\lambda\) wherever \(V\) is differentiable.
+\end{enumerate}
+In (iii) the optimizer is unique on the rows with \(\mu_i>0\); rows with \(\mu_i=0\) do not enter the objective, and there any row is optimal.
+\end{theorem}
+
+The proof is a short calculation (Appendix~\ref{app:proofs}). For a single row, the Lean development constructs the Gibbs law from exponentials, proves that it is normalized and strictly positive, and verifies (i)--(iii) together with the inequality in (iv) (Appendix~\ref{app:lean}). In both versions feasibility and complementary slackness are hypotheses. The theorem says what a price \emph{means} once one exists; the next result says when one exists.
+
+\subsection{The price curve}
+
+Let \(c_0=\Cmu(q^0)\) be the cost of the uniform rows, and let \(\cmin=\sum_i\mu_i\min_ju_{ij}\) be the smallest achievable cost.
+
+\begin{proposition}[Price regimes]\label{prop:regimes}
+Suppose some row with \(\mu_i>0\) has nonconstant costs. Then \(\lambda\mapsto\Cmu(q^\lambda)\) is continuous on \([0,\infty)\), with
+\[
+\frac{d}{d\lambda}\Cmu(q^\lambda)=-\sum_i\mu_i\Var_{q^\lambda_{i\cdot}}(u_{i\cdot})<0,
+\]
+and it decreases from \(c_0\) at \(\lambda=0\) to \(\cmin\) as \(\lambda\to\infty\). The budget problem has five regimes:
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+\item \(b<\cmin\): infeasible.
+\item \(b=\cmin\): every optimizer is uniform on the cost minimizers of each row with \(\mu_i>0\) (rows with \(\mu_i=0\) are unconstrained); the Gibbs limit \(\lambda\to\infty\), uniform on every row's minimizers, is one optimizer, and no finite price attains it.
+\item \(\cmin<b<c_0\): there is a unique finite price \(\lambda^\star(b)>0\) with \(\Cmu(q^{\lambda^\star})=b\). On this interval \(V'(b)=\lambda^\star(b)\) and
+\(\displaystyle\frac{d\lambda^\star}{db}=-\Big[\sum_i\mu_i\Var_{q^{\lambda^\star}_{i\cdot}}(u_{i\cdot})\Big]^{-1}<0.\)
+\item \(b=c_0\): the constraint is active and the price is zero.
+\item \(b>c_0\): the constraint is slack, the price is zero, and the uniform rows are optimal.
+\end{enumerate}
+If every row with \(\mu_i>0\) has constant costs, then \(c_0=\cmin\) and the price is not identifiable.
+\end{proposition}
+
+Two things follow. First, the anti-monotone price curve in Section~\ref{sec:lab-price} is guaranteed by theorem, so the experiment checks the solver rather than discovering a law. Second, ``price emerges when the budget binds'' needs one refinement: the price is positive exactly when the budget lies strictly inside \((\cmin,c_0)\). At the threshold \(b=c_0\) the budget binds with price zero. If one instead imposes an equality constraint \(\Cmu(q)=b\), then for \(c_0<b<c_{\max}\), with \(c_{\max}=\sum_i\mu_i\max_ju_{ij}\), the Gibbs multiplier is finite and negative; at \(b=c_{\max}\) it requires the limit \(\lambda\to-\infty\), and for \(b>c_{\max}\) the equality is infeasible. Nonnegative prices belong to inequality budgets.
+
+\subsection{Canonical instances}
+
+The classical examples have this form. In equilibrium statistical mechanics, energy is the ledger, entropy is maximized under a mean-energy constraint, and the multiplier is the inverse temperature \(\beta\) (in units where entropy is dimensionless); free energy packages the trade-off \cite{jaynes1957information,presse2013maxent}. In rate--distortion theory, rate is minimized subject to a distortion budget; the nonnegative multiplier of that budget is, wherever the rate--distortion function is differentiable, the negative of its slope, and it trades fidelity against code length \cite{berger1971ratedistortion,coverthomas2006}. This is an instance of general constrained duality rather than of the fixed-cost entropy programme above. In economics, the budget is the direct feasibility currency, and prices are the dual variables of resource and clearing constraints \cite{arrowdebreu1954}. The same structure describes regularization strengths as prices of model complexity and, in rational-inattention models, a price on attention or information-processing capacity \cite{sims2003rationalinattention}.
+
+What these share is the geometry of constrained duality: a ledger, a budget, and a supporting multiplier. What they do not share is the source of the budget. In each case it comes from a domain-specific resource law, which is exactly the role of Assumption~\ref{ass:ledger}. The principle explains why prices follow once such a law is in place. It does not claim that every stable layer has one.
+
+\subsection{Relation to PICA}
+
+In the PICA interaction algebra the relevant cell is \textbf{P2}\(\leftarrow\)\textbf{P6}: accounting informs gating \cite{tsiokos2026create}. That cell is the local form of the first half of the principle, in which a ledger becomes a feasibility boundary. Two neighbouring cells are suggestive: \textbf{P5}\(\leftarrow\)\textbf{P6}, in which audit reshapes packaging (Section~\ref{sec:lab-packaging} gives a quantitative instance), and \textbf{P6}\(\leftarrow\)\textbf{P6}, in which accounting regulates itself. PICA supplied a laboratory in which primitives can be switched on and off. Here we read that laboratory economically: what closures spend, how the spending becomes a constraint, and when the constraint returns a price.

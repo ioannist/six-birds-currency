@@ -1,0 +1,17 @@
+{
+  "action": "created new-version draft",
+  "concept_record_id": "18926770",
+  "dashboard_url": "https://zenodo.org/uploads/23088986",
+  "doi": "10.5281/zenodo.23088986",
+  "doi_reservation": {
+    "client": "datacite",
+    "identifier": "10.5281/zenodo.23088986",
+    "provider": "datacite",
+    "verified_via": "rdm_pid_table"
+  },
+  "draft_id": 23088986,
+  "recorded_at": "2026-10-01T18:40:07+00:00",
+  "source_doi": "10.5281/zenodo.18926771",
+  "source_record_id": 18926771,
+  "source_title": "To Spend a Stone with Six Birds: Currency-Constraint Duality and Shadow Prices Across Closure Layers"
+}
